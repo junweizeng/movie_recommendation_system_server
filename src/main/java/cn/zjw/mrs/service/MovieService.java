@@ -1,13 +1,10 @@
 package cn.zjw.mrs.service;
 
 import cn.zjw.mrs.entity.Movie;
-import cn.zjw.mrs.entity.Result;
-import cn.zjw.mrs.vo.MovieCardVo;
+import cn.zjw.mrs.vo.movie.MovieCardVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**

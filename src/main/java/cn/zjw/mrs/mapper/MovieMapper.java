@@ -1,7 +1,7 @@
 package cn.zjw.mrs.mapper;
 
 import cn.zjw.mrs.entity.Movie;
-import cn.zjw.mrs.vo.MovieCardVo;
+import cn.zjw.mrs.vo.movie.MovieCardVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.springframework.stereotype.Repository;
 

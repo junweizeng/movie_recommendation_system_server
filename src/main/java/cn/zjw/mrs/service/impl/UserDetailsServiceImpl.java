@@ -39,7 +39,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new RuntimeException("用户名或密码错误");
         }
 
-        // TODO 查询对应的权限信息
+        // 查询对应的权限信息
         List<String> list = new ArrayList<>(Arrays.asList("admin", "tourist"));
 
         // 把数据封装成UserDetails返回

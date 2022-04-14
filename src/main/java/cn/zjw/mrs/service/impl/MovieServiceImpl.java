@@ -1,7 +1,6 @@
 package cn.zjw.mrs.service.impl;
 
-import cn.zjw.mrs.entity.Result;
-import cn.zjw.mrs.vo.MovieCardVo;
+import cn.zjw.mrs.vo.movie.MovieCardVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;

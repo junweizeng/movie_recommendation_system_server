@@ -40,7 +40,8 @@
         three,two,one,
         introduction,pic
     </sql>
-    <select id="selectRecommendedMoviesByMovieId" resultType="cn.zjw.mrs.vo.MovieCardVo">
+
+    <select id="selectRecommendedMoviesByMovieId" resultType="cn.zjw.mrs.vo.movie.MovieCardVo">
         SELECT m.id, m.name, m.score, m.pic from movie m
         JOIN same_likes sl ON m.did = sl.sid
         WHERE sl.did = ${id}

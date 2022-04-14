@@ -1,4 +1,4 @@
-package cn.zjw.mrs.vo;
+package cn.zjw.mrs.vo.user;
 
 import cn.zjw.mrs.enums.SexEnum;
 import lombok.Data;

@@ -1,12 +1,11 @@
 package cn.zjw.mrs;
 
-import cn.zjw.mrs.entity.Movie;
 import cn.zjw.mrs.entity.User;
 import cn.zjw.mrs.enums.SexEnum;
+import cn.zjw.mrs.mapper.CommentMapper;
 import cn.zjw.mrs.mapper.MovieMapper;
 import cn.zjw.mrs.mapper.UserMapper;
-import cn.zjw.mrs.service.MovieService;
-import cn.zjw.mrs.vo.MovieCardVo;
+import cn.zjw.mrs.vo.movie.MovieCardVo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,6 +28,9 @@ public class UserMapperTest {
 
     @Autowired
     private MovieMapper movieMapper;
+
+    @Autowired
+    private CommentMapper commentMapper;
 
     @Test
     public void testUserMapper() {

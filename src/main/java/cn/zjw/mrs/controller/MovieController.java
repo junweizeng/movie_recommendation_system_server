@@ -3,12 +3,9 @@ package cn.zjw.mrs.controller;
 import cn.zjw.mrs.entity.Movie;
 import cn.zjw.mrs.entity.Result;
 import cn.zjw.mrs.service.MovieService;
-import cn.zjw.mrs.vo.MovieCardVo;
+import cn.zjw.mrs.vo.movie.MovieCardVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -27,6 +24,15 @@ public class MovieController {
     @Resource
     private MovieService movieService;
 
+    /**
+     * 获取一整页电影信息列表
+     * @param currentPage 当前页码
+     * @param pageSize 每页电影数量
+     * @param type 电影类型
+     * @param region 电影地区
+     * @param search 搜索关键字
+     * @return 电影列表
+     */
     @GetMapping
     public Result<?> getPagesByTypeAndRegion(@RequestParam(defaultValue = "1") Integer currentPage,
                                              @RequestParam(defaultValue = "12") Integer pageSize,
@@ -37,14 +43,23 @@ public class MovieController {
         return Result.success(page);
     }
 
-    @RequestMapping("/info")
-//    @PreAuthorize("hasAuthority('tourist')")
+    /**
+     * 通过电影id获取这部电影的详细信息
+     * @param id 电影id
+     * @return 电影详情
+     */
+    @GetMapping("/info")
     public Result<?> getMovie(@RequestParam Integer id) {
         Movie movie = movieService.getById(id);
         return Result.success(movie);
     }
 
-    @RequestMapping("/recommend")
+    /**
+     * 通过电影id获取“喜欢这部电影的人也喜欢...”的推荐电影
+     * @param id 待查询的电影id
+     * @return 推荐电影列表
+     */
+    @GetMapping( "/recommend")
     public Result<?> getRecommendedMoviesByMovieId(@RequestParam Integer id) {
         Integer did = movieService.getById(id).getDid();
         List<MovieCardVo> movies = movieService.getRecommendedMoviesByMovieId(did);

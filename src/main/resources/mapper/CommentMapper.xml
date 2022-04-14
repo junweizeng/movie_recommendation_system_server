@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.zjw.mrs.mapper.CommentMapper">
+
+    <resultMap id="BaseResultMap" type="cn.zjw.mrs.entity.Comment">
+            <result property="uid" column="uid" jdbcType="BIGINT"/>
+            <result property="mid" column="mid" jdbcType="BIGINT"/>
+            <result property="comment" column="comment" jdbcType="VARCHAR"/>
+            <result property="score" column="score" jdbcType="INTEGER"/>
+            <result property="time" column="time" jdbcType="TIMESTAMP"/>
+            <result property="agree" column="agree" jdbcType="INTEGER"/>
+            <result property="type" column="type" jdbcType="TINYINT"/>
+            <result property="nickname" column="user_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        uid,mid,comment,
+        score,time,agree,
+        type,user_name
+    </sql>
+    <select id="selectOwnCommentByUidAndMid" resultType="cn.zjw.mrs.vo.comment.OwnCommentVo">
+        SELECT c.score, c.comment, c.time, c.nickname, c.agree FROM `comment` c
+        WHERE uid = ${uid} AND mid = ${mid}
+    </select>
+    <select id="selectCommentsByMovieId" resultType="cn.zjw.mrs.vo.comment.OwnCommentVo">
+        SELECT c.score, c.comment, c.time, c.nickname, c.agree FROM `comment` c
+        WHERE mid = ${mid}
+    </select>
+</mapper>

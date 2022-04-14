@@ -36,17 +36,17 @@ public class UserController {
         return userService.register(user);
     }
 
-    @RequestMapping("/judge")
+    @PostMapping("/judge")
     public Result<?> isLogin() {
         return Result.success();
     }
 
-    @RequestMapping("/info")
+    @GetMapping("/info")
     public Result<?> getUserInfo(@RequestParam Integer id) {
         return Result.success(userService.getById(id));
     }
 
-    @RequestMapping("/types/and/regions")
+    @GetMapping("/types/and/regions")
     public Result<?> getTypesAndRegions(@RequestParam Integer id) {
         return userService.getTypesAndRegions(id);
     }
