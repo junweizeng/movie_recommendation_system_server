@@ -1,0 +1,22 @@
+server:
+  port: 8888
+
+spring:
+  # 配置数据源信息
+  datasource:
+    # 配置数据源类型
+    type: com.zaxxer.hikari.HikariDataSource
+    # 配置连接数据库信息
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://rm-bp11602preg16q6g4jo.mysql.rds.aliyuncs.com:3306/mrs?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false
+    username: zjw
+    password: Zjw2933!
+
+
+# 配置MyBatis日志
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  type-enums-package: cn.zjw.mrs.enums
+
+

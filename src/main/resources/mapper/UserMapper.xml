@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.zjw.mrs.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="cn.zjw.mrs.entity.User">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="username" column="username" jdbcType="VARCHAR"/>
+            <result property="nickname" column="nickname" jdbcType="VARCHAR"/>
+            <result property="password" column="password" jdbcType="VARCHAR"/>
+            <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+            <result property="sex" column="sex" jdbcType="INTEGER"/>
+            <result property="state" column="state" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,username,nickname,
+        password,avatar,sex,
+        state
+    </sql>
+    <select id="selectUserTypes" resultType="java.lang.String">
+        SELECT t.type FROM `user` u
+        JOIN type_like tl on tl.uid = u.id
+        JOIN type t on t.id = tl.tid
+        WHERE u.id = ${id}
+        ORDER BY tl.degree
+    </select>
+    <select id="selectUserRegions" resultType="java.lang.String">
+        SELECT r.region FROM `user` u
+        JOIN region_like rl on rl.uid = u.id
+        JOIN region r on r.id = rl.rid
+        WHERE u.id = ${id}
+        ORDER BY rl.degree
+    </select>
+
+</mapper>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.zjw.mrs.mapper.MovieMapper">
+
+    <resultMap id="BaseResultMap" type="cn.zjw.mrs.entity.Movie">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="did" column="did" jdbcType="INTEGER"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="year" column="year" jdbcType="SMALLINT"/>
+            <result property="directors" column="directors" jdbcType="VARCHAR"/>
+            <result property="writers" column="writers" jdbcType="VARCHAR"/>
+            <result property="actors" column="actors" jdbcType="VARCHAR"/>
+            <result property="types" column="types" jdbcType="VARCHAR"/>
+            <result property="regions" column="regions" jdbcType="VARCHAR"/>
+            <result property="languages" column="languages" jdbcType="VARCHAR"/>
+            <result property="releaseDate" column="release_date" jdbcType="VARCHAR"/>
+            <result property="runtime" column="runtime" jdbcType="VARCHAR"/>
+            <result property="alias" column="alias" jdbcType="VARCHAR"/>
+            <result property="imdb" column="imdb" jdbcType="VARCHAR"/>
+            <result property="score" column="score" jdbcType="DOUBLE"/>
+            <result property="num" column="num" jdbcType="VARCHAR"/>
+            <result property="five" column="five" jdbcType="DOUBLE"/>
+            <result property="four" column="four" jdbcType="DOUBLE"/>
+            <result property="three" column="three" jdbcType="DOUBLE"/>
+            <result property="two" column="two" jdbcType="DOUBLE"/>
+            <result property="one" column="one" jdbcType="DOUBLE"/>
+            <result property="introduction" column="introduction" jdbcType="VARCHAR"/>
+            <result property="pic" column="pic" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,did,name,
+        year,directors,writers,
+        actors,types,regions,
+        languages,release_date,runtime,
+        alias,imdb,score,
+        num,five,four,
+        three,two,one,
+        introduction,pic
+    </sql>
+    <select id="selectRecommendedMoviesByMovieId" resultType="cn.zjw.mrs.vo.MovieCardVo">
+        SELECT m.id, m.name, m.score, m.pic from movie m
+        JOIN same_likes sl ON m.did = sl.sid
+        WHERE sl.did = ${id}
+        ORDER BY score DESC
+    </select>
+
+</mapper>
