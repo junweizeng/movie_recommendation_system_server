@@ -11,6 +11,7 @@ import cn.zjw.mrs.utils.RedisCache;
 import cn.zjw.mrs.vo.user.LoginUserVo;
 import cn.zjw.mrs.vo.user.UserInfoVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -106,7 +107,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public Result<?> getTypesAndRegions(Integer id) {
+    public Result<?> getTypesAndRegions(Long id) {
         List<String> types = userMapper.selectUserTypes(id);
         List<String> regions = userMapper.selectUserRegions(id);
 
@@ -114,6 +115,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         res.put("types", types);
         res.put("regions", regions);
         return Result.success(res);
+    }
+
+    @Override
+    public Result<?> updateNickname(String nickname, String username) {
+        int update = userMapper.update(null, new LambdaUpdateWrapper<User>()
+                .set(User::getNickname, nickname).eq(User::getUsername, username));
+        if (update == 0) {
+            return Result.error(-1, "昵称更新失败(┬┬﹏┬┬)");
+        }
+        return Result.success("昵称更新成功(‾◡◝)", null);
+    }
+
+    @Override
+    public Result<?> updateSex(Integer sex, String username) {
+        int update = userMapper.update(null, new LambdaUpdateWrapper<User>()
+                .set(User::getSex, sex).eq(User::getUsername, username));
+        if (update == 0) {
+            return Result.error(-1, "性别更新失败(┬┬﹏┬┬)");
+        }
+        return Result.success("性别更新成功(‾◡◝)", null);
     }
 
 }

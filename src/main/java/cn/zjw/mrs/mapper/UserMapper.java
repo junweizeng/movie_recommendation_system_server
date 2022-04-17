@@ -14,9 +14,9 @@ import java.util.List;
 */
 @Repository
 public interface UserMapper extends BaseMapper<User> {
-    List<String> selectUserTypes(Integer id);
+    List<String> selectUserTypes(Long id);
 
-    List<String> selectUserRegions(Integer id);
+    List<String> selectUserRegions(Long id);
 }
 
 

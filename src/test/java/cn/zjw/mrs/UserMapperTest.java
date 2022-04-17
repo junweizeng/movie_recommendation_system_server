@@ -61,10 +61,10 @@ public class UserMapperTest {
 
     @Test
     public void TestGetUserTypes() {
-        List<String> types = userMapper.selectUserTypes(10);
+        List<String> types = userMapper.selectUserTypes((long) 10);
         System.out.println(types);
 
-        List<String> regions = userMapper.selectUserRegions(10);
+        List<String> regions = userMapper.selectUserRegions((long) 10);
         System.out.println(regions);
     }
 

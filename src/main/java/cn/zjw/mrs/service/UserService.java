@@ -17,5 +17,9 @@ public interface UserService extends IService<User> {
 
     Result<?> register(User user);
 
-    Result<?> getTypesAndRegions(Integer id);
+    Result<?> getTypesAndRegions(Long id);
+
+    Result<?> updateNickname(String nickname, String username);
+
+    Result<?> updateSex(Integer sex, String username);
 }

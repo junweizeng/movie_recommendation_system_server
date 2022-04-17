@@ -1,11 +1,16 @@
 package cn.zjw.mrs.controller;
 
+import cn.zjw.mrs.entity.LoginUser;
 import cn.zjw.mrs.entity.Result;
 import cn.zjw.mrs.entity.User;
 import cn.zjw.mrs.service.UserService;
+import cn.zjw.mrs.vo.user.UserInfoVo;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.security.Principal;
 
 /**
  * @Classname UserController
@@ -42,12 +47,30 @@ public class UserController {
     }
 
     @GetMapping("/info")
-    public Result<?> getUserInfo(@RequestParam Integer id) {
-        return Result.success(userService.getById(id));
+    public Result<?> getUserInfo(Authentication authentication) {
+        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+        User user = loginUser.getUser();
+        UserInfoVo userInfoVo = new UserInfoVo(
+                user.getId(),
+                user.getNickname(),
+                user.getAvatar(),
+                user.getSex().getSexName());
+        return Result.success(userInfoVo);
     }
 
     @GetMapping("/types/and/regions")
-    public Result<?> getTypesAndRegions(@RequestParam Integer id) {
-        return userService.getTypesAndRegions(id);
+    public Result<?> getTypesAndRegions(Authentication authentication) {
+        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+        return userService.getTypesAndRegions(loginUser.getUser().getId());
+    }
+
+    @PutMapping("/update/nickname")
+    public Result<?> updateUserNickname(@RequestParam String nickname, Principal principal) {
+        return userService.updateNickname(nickname, principal.getName());
+    }
+
+    @PutMapping("/update/sex")
+    public Result<?> updateUserSex(@RequestParam Integer sex, Principal principal) {
+        return userService.updateSex(sex, principal.getName());
     }
 }

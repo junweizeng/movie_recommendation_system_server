@@ -67,18 +67,18 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
                             .eq(Comment::getUid, comment.getUid())      // 更新数据条件，判断uid和mid是否匹配
                             .eq(Comment::getMid, comment.getMid()));
             if (update <= 0) {
-                return Result.error(-1, "评价更新失败，请稍后重试");
+                return Result.error(-1, "评价更新失败，请稍后重试(┬┬﹏┬┬)");
             } else {
-                return Result.success("评价更新成功", "");
+                return Result.success("评价更新成功(‾◡◝)", "");
             }
         }
 
         // 如果评价信息不存在，则插入评价信息
         int isInsert = commentMapper.insert(comment);
         if (isInsert <= 0) {
-            return Result.error(-1, "评价失败");
+            return Result.error(-1, "评价失败(┬┬﹏┬┬)");
         } else {
-            return Result.success("评价成功", "");
+            return Result.success("评价成功(‾◡◝)", null);
         }
     }
 

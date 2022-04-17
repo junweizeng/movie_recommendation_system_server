@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.sql.Timestamp;
+
 import lombok.Data;
 
 /**
@@ -130,6 +132,11 @@ public class Movie implements Serializable {
      */
     private String pic;
 
+    /**
+     * 最近一次爬取时间
+     */
+    private Timestamp crawlTime;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
@@ -167,7 +174,8 @@ public class Movie implements Serializable {
             && (this.getTwo() == null ? other.getTwo() == null : this.getTwo().equals(other.getTwo()))
             && (this.getOne() == null ? other.getOne() == null : this.getOne().equals(other.getOne()))
             && (this.getIntroduction() == null ? other.getIntroduction() == null : this.getIntroduction().equals(other.getIntroduction()))
-            && (this.getPic() == null ? other.getPic() == null : this.getPic().equals(other.getPic()));
+            && (this.getPic() == null ? other.getPic() == null : this.getPic().equals(other.getPic()))
+            && (this.getCrawlTime() == null ? other.getCrawlTime() == null : this.getCrawlTime().equals(other.getCrawlTime()));
     }
 
     @Override
@@ -197,6 +205,7 @@ public class Movie implements Serializable {
         result = prime * result + ((getOne() == null) ? 0 : getOne().hashCode());
         result = prime * result + ((getIntroduction() == null) ? 0 : getIntroduction().hashCode());
         result = prime * result + ((getPic() == null) ? 0 : getPic().hashCode());
+        result = prime * result + ((getCrawlTime() == null) ? 0 : getCrawlTime().hashCode());
         return result;
     }
 
@@ -229,8 +238,11 @@ public class Movie implements Serializable {
         sb.append(", one=").append(one);
         sb.append(", introduction=").append(introduction);
         sb.append(", pic=").append(pic);
+        sb.append(", crawlTime=").append(crawlTime);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
     }
+
+
 }
