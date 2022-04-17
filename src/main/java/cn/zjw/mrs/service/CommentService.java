@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 */
 @Repository
 public interface CommentService extends IService<Comment> {
-    Result<?> addComment(Comment comment);
+    Result<?> addComment(Comment comment, String username);
 
     Result<?> getOwnComment(Long mid);
 

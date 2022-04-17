@@ -23,4 +23,32 @@ public enum SexEnum {
         this.sex = sex;
         this.sexName = sexName;
     }
+
+    /**
+     * 通过性别名称查找性别号码
+     * @param sexName 性别名称
+     * @return 性别号码
+     */
+    public static Integer findSexBySexName (String sexName) {
+        for (SexEnum sexEnum : SexEnum.values()) {
+            if (sexEnum.getSexName().equals(sexName)) {
+                return sexEnum.getSex();
+            }
+        }
+        throw new IllegalArgumentException("sexName is invalid");
+    }
+
+    /**
+     * 通过性别号码查找性别名称
+     * @param sex 性别号码
+     * @return 性别名称
+     */
+    public static String findSexNameBySex (Integer sex) {
+        for (SexEnum sexEnum : SexEnum.values()) {
+            if (sexEnum.getSex().equals(sex)) {
+                return sexEnum.getSexName();
+            }
+        }
+        throw new IllegalArgumentException("sex is invalid");
+    }
 }

@@ -2,6 +2,8 @@ package cn.zjw.mrs.service.impl;
 
 import cn.zjw.mrs.entity.LoginUser;
 import cn.zjw.mrs.entity.Result;
+import cn.zjw.mrs.entity.User;
+import cn.zjw.mrs.mapper.UserMapper;
 import cn.zjw.mrs.vo.comment.OwnCommentVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -36,22 +38,24 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
     @Resource
     private CommentMapper commentMapper;
 
+    @Resource
+    private UserMapper userMapper;
+
     /**
      * 添加评价信息，如果评价信息已经存在，则更新评价信息
      * @param comment 评价信息
      * @return
      */
     @Override
-    public Result<?> addComment(Comment comment) {
-        // 获取SecurityHolder中的用户id
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
-        Long userId = loginUser.getUser().getId();
-        String name = loginUser.getUser().getNickname();
-        comment.setUid(userId);
+    public Result<?> addComment(Comment comment, String username) {
+        // 获取当前登录用户的基本信息
+        User user = userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, username));
+        Long uid = user.getId();
+        String nickname = user.getNickname();
+        comment.setUid(uid);
         comment.setType(0);
         comment.setAgree(0);
-        comment.setNickname(name);
+        comment.setNickname(nickname);
         comment.setTime(new Timestamp(System.currentTimeMillis())); // 设置当前时间
 
         Comment isCommentExists = commentMapper.selectOne(

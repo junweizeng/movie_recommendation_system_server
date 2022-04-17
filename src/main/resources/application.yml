@@ -19,4 +19,18 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   type-enums-package: cn.zjw.mrs.enums
 
-
+aliyun:
+  oss:
+    # oss对外服务的访问域名
+    endpoint: oss-cn-hangzhou.aliyuncs.com
+    # 访问身份验证中用到用户标识
+    accessKeyId: LTAI5t61nKKQXDDum7KtX5tc
+    # 用户用于加密签名字符串和oss用来验证签名字符串的密钥
+    accessKeySecret: Ii91661FHdOh4UlwMehnZD47lvXrtY
+    # oss的存储空间
+    bucketName: mrs-zjw
+    # 上传文件大小(M)
+    maxSize: 3
+    # 上传文件夹路径前缀
+    dir:
+      prefix: mrs/avatar/

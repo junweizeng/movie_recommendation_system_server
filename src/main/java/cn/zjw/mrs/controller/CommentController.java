@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.security.Principal;
 
 /**
  * @Classname CommentController
@@ -24,8 +25,8 @@ public class CommentController {
     private CommentService commentService;
 
     @PostMapping
-    private Result<?> addComment(@RequestBody Comment comment) {
-        return commentService.addComment(comment);
+    private Result<?> addComment(@RequestBody Comment comment, Principal principal) {
+        return commentService.addComment(comment, principal.getName());
     }
 
     @GetMapping("/own")

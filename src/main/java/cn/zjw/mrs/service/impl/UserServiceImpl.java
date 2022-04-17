@@ -1,9 +1,11 @@
 package cn.zjw.mrs.service.impl;
 
+import cn.zjw.mrs.entity.Comment;
 import cn.zjw.mrs.entity.LoginUser;
 import cn.zjw.mrs.entity.Result;
 import cn.zjw.mrs.entity.User;
 import cn.zjw.mrs.enums.SexEnum;
+import cn.zjw.mrs.mapper.CommentMapper;
 import cn.zjw.mrs.mapper.UserMapper;
 import cn.zjw.mrs.service.UserService;
 import cn.zjw.mrs.utils.JwtUtil;
@@ -21,6 +23,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,16 +39,19 @@ import java.util.Objects;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     implements UserService{
 
-    @Autowired
+    @Resource
     private AuthenticationManager authenticationManager;
 
-    @Autowired
+    @Resource
     private RedisCache redisCache;
 
-    @Autowired
+    @Resource
     private UserMapper userMapper;
 
-    @Autowired
+    @Resource
+    private CommentMapper commentMapper;
+
+    @Resource
     private PasswordEncoder passwordEncoder;
 
     @Override
@@ -107,6 +114,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
+    public Result<?> getUserInfo(String username) {
+        User user = userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, username));
+        UserInfoVo userInfoVo = new UserInfoVo(
+                user.getId(),
+                user.getUsername(),
+                user.getNickname(),
+                user.getAvatar(),
+                user.getSex().getSexName());
+        return Result.success(userInfoVo);
+    }
+
+    @Override
     public Result<?> getTypesAndRegions(Long id) {
         List<String> types = userMapper.selectUserTypes(id);
         List<String> regions = userMapper.selectUserRegions(id);
@@ -118,25 +137,34 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public Result<?> updateNickname(String nickname, String username) {
+    public Result<?> updateNickname(String nickname) {
+        // 获取SecurityHolder中的用户id
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+        Long uid = loginUser.getUser().getId();
+
         int update = userMapper.update(null, new LambdaUpdateWrapper<User>()
-                .set(User::getNickname, nickname).eq(User::getUsername, username));
+                .set(User::getNickname, nickname).eq(User::getId, uid));
+
         if (update == 0) {
             return Result.error(-1, "昵称更新失败(┬┬﹏┬┬)");
         }
+
+        // 将评论中所有id为uid的记录的nickname改为更新后的nickname
+        commentMapper.update(null, new LambdaUpdateWrapper<Comment>()
+                .set(Comment::getNickname, nickname).eq(Comment::getUid, uid));
         return Result.success("昵称更新成功(‾◡◝)", null);
     }
 
     @Override
-    public Result<?> updateSex(Integer sex, String username) {
+    public Result<?> updateSex(String sexName, String username) {
         int update = userMapper.update(null, new LambdaUpdateWrapper<User>()
-                .set(User::getSex, sex).eq(User::getUsername, username));
+                .set(User::getSex, SexEnum.findSexBySexName(sexName)).eq(User::getUsername, username));
         if (update == 0) {
             return Result.error(-1, "性别更新失败(┬┬﹏┬┬)");
         }
         return Result.success("性别更新成功(‾◡◝)", null);
     }
-
 }
 
 

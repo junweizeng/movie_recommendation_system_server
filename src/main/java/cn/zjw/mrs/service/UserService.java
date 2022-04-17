@@ -17,9 +17,25 @@ public interface UserService extends IService<User> {
 
     Result<?> register(User user);
 
+    Result<?> getUserInfo(String username);
+
     Result<?> getTypesAndRegions(Long id);
 
-    Result<?> updateNickname(String nickname, String username);
+    /**
+     * 更新用户昵称
+     * 若用户昵称更新成功，同时更新评论表中该用户的昵称，返回成功信息
+     * 否则，返回失败信息
+     * @param nickname 新用户昵称
+     * @return 更新成功或失败信息
+     */
+    Result<?> updateNickname(String nickname);
 
-    Result<?> updateSex(Integer sex, String username);
+    /**
+     * 更新用户性别
+     * @param sexName 修改后的性别
+     * @param username 用户账号，唯一标识
+     * @return 更新成功或失败信息
+     */
+    Result<?> updateSex(String sexName, String username);
+
 }
