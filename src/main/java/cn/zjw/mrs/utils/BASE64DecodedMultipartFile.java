@@ -24,13 +24,13 @@ public class BASE64DecodedMultipartFile implements MultipartFile {
     @Override
     public String getName() {
         // TODO - implementation depends on your requirements
-        return System.currentTimeMillis() + Math.random() + "." + header.split("/")[1];
+        return System.currentTimeMillis() + Math.random() + "." + "webp";
     }
 
     @Override
     public String getOriginalFilename() {
         // TODO - implementation depends on your requirements
-        return System.currentTimeMillis() + (int) Math.random() * 10000 + "." + header.split("/")[1];
+        return System.currentTimeMillis() + (int) (Math.random() * 10000) + "." + "webp";
     }
 
     @Override
@@ -67,8 +67,8 @@ public class BASE64DecodedMultipartFile implements MultipartFile {
     /**
      * base64转MultipartFile文件
      *
-     * @param base64
-     * @return
+     * @param base64 base64字符串
+     * @return MultipartFile文件
      */
     public static MultipartFile base64ToMultipart(String base64) {
         try {
@@ -88,6 +88,53 @@ public class BASE64DecodedMultipartFile implements MultipartFile {
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    /**
+     * 保存MultipartFile到本地
+     * @param fileContent 源文件
+     * @param dirPath 本地路径
+     */
+    public static void approvalFile(MultipartFile fileContent, String dirPath){
+        OutputStream os = null;
+        InputStream inputStream = null;
+        String fileName = null;
+        try {
+            inputStream = fileContent.getInputStream();
+            fileName = fileContent.getOriginalFilename();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            String path = dirPath;
+            // 2、保存到临时文件
+            // 1K的数据缓冲
+            byte[] bs = new byte[1024];
+            // 读取到的数据长度
+            int len;
+            // 输出的文件流保存到本地文件
+            File tempFile = new File(path);
+            if (!tempFile.exists()) {
+                tempFile.mkdirs();
+            }
+            os = new FileOutputStream(tempFile.getPath() + File.separator + fileName);
+            // 开始读取
+            while ((len = inputStream.read(bs)) != -1) {
+                os.write(bs, 0, len);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // 完毕，关闭所有链接
+            try {
+                os.close();
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

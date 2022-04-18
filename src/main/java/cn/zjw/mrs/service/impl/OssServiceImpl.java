@@ -4,11 +4,13 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.IdUtil;
 import cn.zjw.mrs.entity.Result;
+import cn.zjw.mrs.entity.User;
 import cn.zjw.mrs.mapper.UserMapper;
 import cn.zjw.mrs.service.OssService;
 import com.aliyun.oss.ClientException;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.OSSException;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.management.ObjectName;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 /**
  * @Classname OssServiceImpl
@@ -49,17 +52,13 @@ public class OssServiceImpl implements OssService {
         return "https://"  + bucketName + "." + ossClient.getEndpoint().getHost() + "/" + objectName;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new OssServiceImpl().getAvatarObjectName());
-    }
-
     @Override
     public Result<?> updateAvatar(String username, MultipartFile uploadFile) {
         String dirSuffix = getAvatarObjectName();
         String objectName = dirPrefix + dirSuffix;
         try {
-            String content = "Hello OSS";
-            ossClient.putObject(bucketName, objectName, new ByteArrayInputStream(content.getBytes()));
+            // 上传头像到oss
+            ossClient.putObject(bucketName, objectName, uploadFile.getInputStream());
         } catch (OSSException oe) {
             System.out.println("Caught an OSSException, which means your request made it to OSS, "
                     + "but was rejected with an error response for some reason.");
@@ -74,7 +73,14 @@ public class OssServiceImpl implements OssService {
                     + "such as not being able to access the network.");
             System.out.println("Error Message:" + ce.getMessage());
             return Result.error(-1, "头像上传失败(┬┬﹏┬┬)");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Result.error(-1, "头像上传失败(┬┬﹏┬┬)");
         }
+
+        // 头像上传到oss后，将路径存入数据库中
+        userMapper.update(null, new LambdaUpdateWrapper<User>()
+                .set(User::getAvatar, dirSuffix).eq(User::getUsername, username));
         return Result.success("头像修改成功(‾◡◝)", null);
     }
 }
