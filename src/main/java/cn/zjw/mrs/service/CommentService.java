@@ -17,4 +17,6 @@ public interface CommentService extends IService<Comment> {
     Result<?> getOwnComment(Long mid);
 
     Result<?> getCommentsByMovieId(Long mid);
+
+    Result<?> getOwnCommentMovieMoments(Long uid);
 }

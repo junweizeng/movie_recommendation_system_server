@@ -12,12 +12,17 @@ import java.sql.Timestamp;
  * @Description
  */
 @Data
-public class OwnCommentVo {
-
+public class CommentStripVo {
     private int score;
+
     private String comment;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")    //转化时间戳
     private Timestamp time;
+
     private int agree;
+
     private String nickname;
+
+    private String avatar;
 }

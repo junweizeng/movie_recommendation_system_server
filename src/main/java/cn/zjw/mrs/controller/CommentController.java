@@ -38,4 +38,11 @@ public class CommentController {
     private Result<?> getCommentsByMovieId(@RequestParam Long mid) {
         return commentService.getCommentsByMovieId(mid);
     }
+
+    @GetMapping("/movie/moments")
+    private Result<?> getOwnCommentMovieMoments(Authentication authentication) {
+        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+        Long uid = loginUser.getUser().getId();
+        return commentService.getOwnCommentMovieMoments(uid);
+    }
 }

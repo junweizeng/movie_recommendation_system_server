@@ -20,12 +20,48 @@
         score,time,agree,
         type,user_name
     </sql>
-    <select id="selectOwnCommentByUidAndMid" resultType="cn.zjw.mrs.vo.comment.OwnCommentVo">
-        SELECT c.score, c.comment, c.time, c.nickname, c.agree FROM `comment` c
+
+    <select id="selectOwnCommentByUidAndMid" resultType="cn.zjw.mrs.vo.comment.CommentStripVo">
+        SELECT c.score, c.comment, c.time, c.nickname, c.agree, u.avatar FROM `comment` c
+        JOIN `user` u ON c.uid = u.id
         WHERE uid = ${uid} AND mid = ${mid}
     </select>
-    <select id="selectCommentsByMovieId" resultType="cn.zjw.mrs.vo.comment.OwnCommentVo">
-        SELECT c.score, c.comment, c.time, c.nickname, c.agree FROM `comment` c
+
+    <select id="selectCommentsByMovieId" resultType="cn.zjw.mrs.vo.comment.CommentStripVo">
+        SELECT c.score, c.comment, c.time, c.nickname, c.agree, u.avatar FROM `comment` c
+        JOIN `user` u ON c.uid = u.id
         WHERE mid = ${mid}
     </select>
+
+    <resultMap id="CommentMovieResultMap" type="cn.zjw.mrs.vo.comment.CommentMovieVo">
+        <association property="commentStripVo" javaType="cn.zjw.mrs.vo.comment.CommentStripVo">
+            <result property="comment" column="comment" jdbcType="VARCHAR"/>
+            <result property="score" column="score" jdbcType="INTEGER"/>
+            <result property="time" column="time" jdbcType="TIMESTAMP"/>
+            <result property="agree" column="agree" jdbcType="INTEGER"/>
+            <result property="nickname" column="nickname" jdbcType="VARCHAR"/>
+            <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+        </association>
+        <association property="movieStripVo" javaType="cn.zjw.mrs.vo.movie.MovieStripVo">
+            <id property="id" column="mid" jdbcType="BIGINT"/>
+            <result property="did" column="did" jdbcType="INTEGER"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="directors" column="directors" jdbcType="VARCHAR"/>
+            <result property="actors" column="actors" jdbcType="VARCHAR"/>
+            <result property="types" column="types" jdbcType="VARCHAR"/>
+            <result property="regions" column="regions" jdbcType="VARCHAR"/>
+            <result property="score" column="m_score" jdbcType="DOUBLE"/>
+            <result property="pic" column="pic" jdbcType="VARCHAR"/>
+        </association>
+    </resultMap>
+
+    <select id="selectOwnCommentMovieMoments" resultMap="CommentMovieResultMap" resultType="cn.zjw.mrs.vo.comment.CommentMovieVo">
+        SELECT c.*, u.avatar, m.did, m.name, m.score m_score, m.pic, m.directors, m.actors, m.regions, m.types FROM `comment` c
+        JOIN `user` u ON c.uid = u.id
+        JOIN `movie` m ON c.mid = m.id
+        WHERE uid = ${id}
+        ORDER BY c.time DESC
+    </select>
+
+
 </mapper>

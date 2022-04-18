@@ -4,22 +4,20 @@ import cn.zjw.mrs.entity.LoginUser;
 import cn.zjw.mrs.entity.Result;
 import cn.zjw.mrs.entity.User;
 import cn.zjw.mrs.mapper.UserMapper;
-import cn.zjw.mrs.vo.comment.OwnCommentVo;
+import cn.zjw.mrs.utils.PicUrlUtil;
+import cn.zjw.mrs.vo.comment.CommentMovieVo;
+import cn.zjw.mrs.vo.comment.CommentStripVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.zjw.mrs.entity.Comment;
 import cn.zjw.mrs.service.CommentService;
 import cn.zjw.mrs.mapper.CommentMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.xml.crypto.Data;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
@@ -93,20 +91,33 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         Long uid = loginUser.getUser().getId();
 
-        OwnCommentVo ownCommentVo = commentMapper.selectOwnCommentByUidAndMid(uid, mid);
-        if (!Objects.isNull(ownCommentVo)) {
-            return Result.success(ownCommentVo);
-        } else {
-            return Result.error(-1, "您还未评价");
-        }
+        CommentStripVo commentStripVo = commentMapper.selectOwnCommentByUidAndMid(uid, mid);
+        commentStripVo.setAvatar(PicUrlUtil.getFullAvatarUrl(commentStripVo.getAvatar()));
+        return Result.success(commentStripVo);
     }
 
     @Override
     public Result<?> getCommentsByMovieId(Long mid) {
-        List<OwnCommentVo> ownCommentVos = commentMapper.selectCommentsByMovieId(mid);
-        Map<String, List<OwnCommentVo>> res = new HashMap<>();
-        res.put("comments", ownCommentVos);
+        List<CommentStripVo> commentStripVos = commentMapper.selectCommentsByMovieId(mid);
+        for (CommentStripVo comment: commentStripVos) {
+            comment.setAvatar(PicUrlUtil.getFullAvatarUrl(comment.getAvatar()));
+        }
+        Map<String, List<CommentStripVo>> res = new HashMap<>();
+        res.put("comments", commentStripVos);
         return Result.success(res);
+    }
+
+    @Override
+    public Result<?> getOwnCommentMovieMoments(Long uid) {
+        List<CommentMovieVo> commentMovieVos = commentMapper.selectOwnCommentMovieMoments(uid);
+        // 获取头像和电影海报完整的url
+        for (CommentMovieVo commentMovieVo: commentMovieVos) {
+            String avatar = commentMovieVo.getCommentStripVo().getAvatar();
+            commentMovieVo.getCommentStripVo().setAvatar(PicUrlUtil.getFullAvatarUrl(avatar));
+            String pic = commentMovieVo.getMovieStripVo().getPic();
+            commentMovieVo.getMovieStripVo().setPic(PicUrlUtil.getFullMoviePicUrl(pic));
+        }
+        return Result.success(commentMovieVos);
     }
 }
 
