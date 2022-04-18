@@ -9,13 +9,13 @@ import cn.zjw.mrs.mapper.CommentMapper;
 import cn.zjw.mrs.mapper.UserMapper;
 import cn.zjw.mrs.service.UserService;
 import cn.zjw.mrs.utils.JwtUtil;
+import cn.zjw.mrs.utils.PicUrlUtil;
 import cn.zjw.mrs.utils.RedisCache;
 import cn.zjw.mrs.vo.user.LoginUserVo;
 import cn.zjw.mrs.vo.user.UserInfoVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,7 +24,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,11 +115,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public Result<?> getUserInfo(String username) {
         User user = userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, username));
+
         UserInfoVo userInfoVo = new UserInfoVo(
                 user.getId(),
                 user.getUsername(),
                 user.getNickname(),
-                user.getAvatar(),
+                PicUrlUtil.getFullAvatarUrl(user.getAvatar()),
                 user.getSex().getSexName());
         return Result.success(userInfoVo);
     }

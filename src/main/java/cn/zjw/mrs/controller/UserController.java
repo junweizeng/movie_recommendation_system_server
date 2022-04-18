@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
+import java.util.Base64;
 
 /**
  * @Classname UserController
@@ -80,8 +83,10 @@ public class UserController {
         if (Strings.isBlank(avatar)) {
             return Result.error(404, "头像更新失败(┬┬﹏┬┬)");
         }
+        System.out.println("avatar:" + avatar);
         MultipartFile avatarFile = BASE64DecodedMultipartFile.base64ToMultipart(avatar);
-
         return ossService.updateAvatar(principal.getName(), avatarFile);
     }
+
+
 }

@@ -70,7 +70,7 @@ public class UserMapperTest {
 
     @Test
     public void TestGetRecommendedMovies() {
-        List<MovieCardVo> movies = movieMapper.selectRecommendedMoviesByMovieId(1295644);
+        List<MovieCardVo> movies = movieMapper.selectRecommendedMoviesByMovieId(1295644L);
         for (MovieCardVo movie : movies) {
             System.out.println(movie);
         }
