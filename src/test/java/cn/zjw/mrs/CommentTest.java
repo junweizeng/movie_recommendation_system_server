@@ -1,14 +1,13 @@
 package cn.zjw.mrs;
 
-import cn.zjw.mrs.entity.Comment;
 import cn.zjw.mrs.mapper.CommentMapper;
-import cn.zjw.mrs.vo.comment.OwnCommentVo;
+import cn.zjw.mrs.vo.comment.CommentMovieVo;
+import cn.zjw.mrs.vo.comment.CommentStripVo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @Classname CommentTest
@@ -24,13 +23,24 @@ public class CommentTest {
 
     @Test
     public void getOwnCommentTest() {
-        OwnCommentVo ownCommentVo = commentMapper.selectOwnCommentByUidAndMid((long) 11, (long) 5);
-        System.out.println(ownCommentVo);
+        CommentStripVo commentStripVo = commentMapper.selectOwnCommentByUidAndMid((long) 11, (long) 5);
+        System.out.println(commentStripVo);
     }
 
     @Test
     public void getCommentsByMovieId() {
-        List<OwnCommentVo> ownCommentVo = commentMapper.selectCommentsByMovieId((long) 5);
-        System.out.println(ownCommentVo);
+        List<CommentStripVo> commentStripVo = commentMapper.selectCommentsByMovieId((long) 5);
+        System.out.println(commentStripVo);
+    }
+
+    @Test
+    public void getCommentMovieMoments() {
+        List<CommentMovieVo> commentMovieVos = commentMapper.selectOwnCommentMovieMoments((long) 10);
+        for (CommentMovieVo commentStripVo: commentMovieVos) {
+            System.out.println(commentStripVo.getCommentStripVo().toString());
+            System.out.println(commentStripVo.getMovieStripVo().toString());
+            System.out.println();
+        }
+        System.out.println(commentMovieVos);
     }
 }
