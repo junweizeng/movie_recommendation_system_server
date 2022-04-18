@@ -25,7 +25,7 @@ public class Movie implements Serializable {
     /**
      * 豆瓣ID
      */
-    private Integer did;
+    private Long did;
 
     /**
      * 电影名

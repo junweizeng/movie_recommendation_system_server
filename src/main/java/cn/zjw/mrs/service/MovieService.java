@@ -1,7 +1,10 @@
 package cn.zjw.mrs.service;
 
 import cn.zjw.mrs.entity.Movie;
+import cn.zjw.mrs.entity.Result;
 import cn.zjw.mrs.vo.movie.MovieCardVo;
+import cn.zjw.mrs.vo.movie.MovieStripVo;
+import cn.zjw.mrs.vo.movie.ReviewedMovieStripVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -25,5 +28,17 @@ public interface MovieService extends IService<Movie> {
      */
     Page<Movie> getPageMovies(Integer currentPage, Integer pageSize, String type, String region, String search);
 
-    List<MovieCardVo> getRecommendedMoviesByMovieId(Integer id);
+    /**
+     * 通过did去数据库中查找”喜欢这部电影的人也喜欢。。。“的电影条目
+     * @param did 电影did
+     * @return ”喜欢这部电影的人也喜欢。。。”电影条目
+     */
+    List<MovieCardVo> getRecommendedMoviesByMovieId(Long did);
+
+    /**
+     * 获取用户id为uid的用户评价过的所有电影的基本信息
+     * @param uid 用户id
+     * @return 评价过的电影条目
+     */
+    List<ReviewedMovieStripVo> getAllReviewedMoviesByUserId(Long uid);
 }

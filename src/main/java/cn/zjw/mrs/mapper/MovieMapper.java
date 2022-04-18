@@ -2,6 +2,8 @@ package cn.zjw.mrs.mapper;
 
 import cn.zjw.mrs.entity.Movie;
 import cn.zjw.mrs.vo.movie.MovieCardVo;
+import cn.zjw.mrs.vo.movie.MovieStripVo;
+import cn.zjw.mrs.vo.movie.ReviewedMovieStripVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +18,10 @@ import java.util.List;
 */
 @Repository
 public interface MovieMapper extends BaseMapper<Movie> {
-    List<MovieCardVo> selectRecommendedMoviesByMovieId(Integer id);
+
+    List<MovieCardVo> selectRecommendedMoviesByMovieId(Long id);
+
+    List<ReviewedMovieStripVo> selectAllReviewedMoviesByUserId(Long uid);
 }
 
 

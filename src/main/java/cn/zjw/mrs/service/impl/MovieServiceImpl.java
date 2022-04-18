@@ -1,6 +1,9 @@
 package cn.zjw.mrs.service.impl;
 
+import cn.zjw.mrs.entity.Result;
+import cn.zjw.mrs.utils.PicUrlUtil;
 import cn.zjw.mrs.vo.movie.MovieCardVo;
+import cn.zjw.mrs.vo.movie.ReviewedMovieStripVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -35,12 +38,30 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie>
                 .like(!region.equals("全部"), Movie::getRegions, region)          // 模糊匹配电影地区
                 .like(StringUtils.isNotEmpty(search), Movie::getName, search);   // 模糊匹配电影名
         movieMapper.selectPage(page, lambdaQueryWrapper);
+
+        List<Movie> movies = page.getRecords();
+        for (Movie movie: movies) {
+            movie.setPic(PicUrlUtil.getFullMoviePicUrl(movie.getPic()));
+        }
         return page;
     }
 
     @Override
-    public List<MovieCardVo> getRecommendedMoviesByMovieId(Integer id) {
-        return movieMapper.selectRecommendedMoviesByMovieId(id);
+    public List<MovieCardVo> getRecommendedMoviesByMovieId(Long did) {
+        List<MovieCardVo> movies = movieMapper.selectRecommendedMoviesByMovieId(did);
+        for (MovieCardVo movie: movies) {
+            movie.setPic(PicUrlUtil.getFullMoviePicUrl(movie.getPic()));
+        }
+        return movies;
+    }
+
+    @Override
+    public List<ReviewedMovieStripVo> getAllReviewedMoviesByUserId(Long uid) {
+        List<ReviewedMovieStripVo> reviewedMovies = movieMapper.selectAllReviewedMoviesByUserId(uid);
+        for (ReviewedMovieStripVo movie: reviewedMovies) {
+            movie.setPic(PicUrlUtil.getFullMoviePicUrl(movie.getPic()));
+        }
+        return reviewedMovies;
     }
 }
 
