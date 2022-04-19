@@ -4,19 +4,20 @@ import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Decoder;
 
 import java.io.*;
+import java.util.Random;
 
 /**
+ * @author zjw
  * @Classname BASE64DecodedMultipartFile
  * @Date 2022/4/18 0:52
- * @Created by zjw
  * @Description
  */
-public class BASE64DecodedMultipartFile implements MultipartFile {
+public class Base64DecodedMultipartFile implements MultipartFile {
 
     private final byte[] imgContent;
     private final String header;
 
-    public BASE64DecodedMultipartFile(byte[] imgContent, String header) {
+    public Base64DecodedMultipartFile(byte[] imgContent, String header) {
         this.imgContent = imgContent;
         this.header = header.split(";")[0];
     }
@@ -30,7 +31,7 @@ public class BASE64DecodedMultipartFile implements MultipartFile {
     @Override
     public String getOriginalFilename() {
         // TODO - implementation depends on your requirements
-        return System.currentTimeMillis() + (int) (Math.random() * 10000) + "." + "webp";
+        return System.currentTimeMillis() + new Random().nextInt() + "." + "webp";
     }
 
     @Override
@@ -84,7 +85,7 @@ public class BASE64DecodedMultipartFile implements MultipartFile {
                 }
             }
 
-            return new BASE64DecodedMultipartFile(b, baseStrs[0]);
+            return new Base64DecodedMultipartFile(b, baseStrs[0]);
         } catch (IOException e) {
             e.printStackTrace();
             return null;

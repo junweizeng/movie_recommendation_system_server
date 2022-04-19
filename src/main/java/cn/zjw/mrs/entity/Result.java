@@ -1,11 +1,18 @@
 package cn.zjw.mrs.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
+ * @author zjw
  * @Classname Result<T>
  * @Date 2022/4/7 16:18
- * @Created by zjw
  * @Description
  */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Result<T> {
     /**
      * 状态码
@@ -18,70 +25,38 @@ public class Result<T> {
     /**
      * 查询到的结果数据
      */
-    private T data;
-
-    public Integer getCode() {
-        return code;
-    }
-
-    public void setCode(Integer code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
-    }
-
-    public Result() {
-    }
-
-    public Result(T data) {
-        this.data = data;
-    }
-
+    private Object data;
 
     public Result(Integer code, String msg) {
         this.code = code;
         this.msg = msg;
     }
 
-    public static Result success() {
-        Result result = new Result<>();
-        result.setCode(200);
-        result.setMsg("成功");
-        return result;
+    public static <T> Result<T> success() {
+        return new Result<>(200, "成功", null);
     }
 
     public static <T> Result<T> success(T data) {
-        Result<T> result = new Result<>(data);
-        result.setCode(200);
-        result.setMsg("成功");
-        return result;
+        return new Result<>(200, "成功", data);
+    }
+
+    public static <T> Result<T> success(String msg) {
+        return new Result<>(200, msg, null);
     }
 
     public static <T> Result<T> success(String msg, T data) {
-        Result<T> result = new Result<>(data);
-        result.setCode(200);
-        result.setMsg(msg);
-        return result;
+        return new Result<>(200, msg, data);
     }
 
-    public static Result error(Integer code, String msg) {
-        Result result = new Result();
-        result.setCode(code);
-        result.setMsg(msg);
-        return result;
+    public static <T> Result<T> error() {
+        return new Result<>(500, "失败", null);
+    }
+
+    public static <T> Result<T> error(String msg) {
+        return new Result<>(500, msg, null);
+    }
+
+    public static <T> Result<T> error(String msg, T data) {
+        return new Result<>(500, msg, data);
     }
 }

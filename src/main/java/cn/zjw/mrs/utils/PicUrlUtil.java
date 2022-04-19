@@ -3,9 +3,9 @@ package cn.zjw.mrs.utils;
 import org.apache.logging.log4j.util.Strings;
 
 /**
+ * @author zjw
  * @Classname PicUrlUtil
  * @Date 2022/4/18 13:30
- * @Created by zjw
  * @Description
  */
 public class PicUrlUtil {

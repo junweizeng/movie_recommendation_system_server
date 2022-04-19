@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * @author zjw
  * @Classname OssClientConfig
  * @Date 2022/4/17 13:48
- * @Created by zjw
  * @Description
  */
 @Configuration

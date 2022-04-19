@@ -24,6 +24,7 @@ import java.util.List;
 @Service
 public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie>
     implements MovieService{
+    private static final String TOTAL = "全部";
 
     @Resource
     MovieMapper movieMapper;
@@ -32,11 +33,15 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie>
     public Page<Movie> getPageMovies(Integer currentPage, Integer pageSize, String type, String region, String search) {
         Page<Movie> page = new Page<>(currentPage, pageSize);
         LambdaQueryWrapper<Movie> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        // select用于选取电影中的某几个字段
         lambdaQueryWrapper.select(Movie::getId, Movie::getDid, Movie::getName, Movie::getDirectors, Movie::getActors,
-                        Movie::getTypes, Movie::getRegions, Movie::getScore, Movie::getPic)       // 选取电影中的某几个字段
-                .like(!type.equals("全部"), Movie::getTypes, type)                // 模糊匹配电影类型
-                .like(!region.equals("全部"), Movie::getRegions, region)          // 模糊匹配电影地区
-                .like(StringUtils.isNotEmpty(search), Movie::getName, search);   // 模糊匹配电影名
+                        Movie::getTypes, Movie::getRegions, Movie::getScore, Movie::getPic)
+                // 模糊匹配电影类型
+                .like(!type.equals(TOTAL), Movie::getTypes, type)
+                // 模糊匹配电影地区
+                .like(!region.equals(TOTAL), Movie::getRegions, region)
+                // 模糊匹配电影名
+                .like(StringUtils.isNotEmpty(search), Movie::getName, search);
         movieMapper.selectPage(page, lambdaQueryWrapper);
 
         List<Movie> movies = page.getRecords();

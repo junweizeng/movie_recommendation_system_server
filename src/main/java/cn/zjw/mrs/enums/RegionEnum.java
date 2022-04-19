@@ -4,17 +4,18 @@ import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.Getter;
 
 /**
+ * @author zjw
  * @Classname RegionEnum
  * @Date 2022/4/12 22:48
- * @Created by zjw
  * @Description
  */
 @Getter
 public enum RegionEnum {
+    // 地区代码 —— 地区名称
     MAINLAND_CHINA(1, "中国大陆"),
     USA(2, "美国"),
     HONG_KONG(3, "中国香港"),
-    TAIWAN(4, "中国台湾"),
+    CHINESE_TAIWAN(4, "中国台湾"),
     JAPAN(5, "日本"),
     KOREA(6, "韩国"),
     UK(7, "英国"),
@@ -33,8 +34,15 @@ public enum RegionEnum {
     BRAZIL(20, "巴西"),
     DENMARK(21, "丹麦");
 
+    /**
+     * 地区名称代码
+     * 将注解所标识的属性的值存储到数据库中
+     */
     @EnumValue
-    private final Integer region; // 将注解所标识的属性的值存储到数据库中
+    private final Integer region;
+    /**
+     * 地区名称
+     */
     private final String regionName;
 
     RegionEnum(Integer region, String regionName) {

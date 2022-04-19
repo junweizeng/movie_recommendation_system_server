@@ -4,9 +4,9 @@ import cn.zjw.mrs.vo.movie.MovieStripVo;
 import lombok.Data;
 
 /**
+ * @author zjw
  * @Classname CommentMovieVo
  * @Date 2022/4/18 15:21
- * @Created by zjw
  * @Description
  */
 @Data

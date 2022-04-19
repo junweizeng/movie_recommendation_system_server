@@ -6,9 +6,9 @@ import lombok.Data;
 import java.sql.Timestamp;
 
 /**
+ * @author zjw
  * @Classname OwnCommentVo
  * @Date 2022/4/14 22:28
- * @Created by zjw
  * @Description
  */
 @Data
@@ -17,7 +17,10 @@ public class CommentStripVo {
 
     private String comment;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")    //转化时间戳
+    /**
+     * 注解用于转化时间戳
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Timestamp time;
 
     private int agree;

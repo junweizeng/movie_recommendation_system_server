@@ -2,7 +2,11 @@ package cn.zjw.mrs.service;
 
 import cn.zjw.mrs.entity.Result;
 import cn.zjw.mrs.entity.User;
+import cn.zjw.mrs.vo.user.UserInfoVo;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
+import java.util.Map;
 
 /**
 * @author 95758
@@ -11,15 +15,39 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface UserService extends IService<User> {
 
+    /**
+     * 用户登录
+     * @param user 用户登录表单
+     * @return 登录结果
+     */
     Result<?> login(User user);
 
+    /**
+     * 用户登出
+     * @return 登出结果
+     */
     Result<?> logout();
 
+    /**
+     * 用户注册
+     * @param user 注册表单信息
+     * @return 注册结果
+     */
     Result<?> register(User user);
 
-    Result<?> getUserInfo(String username);
+    /**
+     * 获取用户基本信息
+     * @param id 用户id
+     * @return 用户基本信息
+     */
+    UserInfoVo getUserInfo(Long id);
 
-    Result<?> getTypesAndRegions(Long id);
+    /**
+     * 获取用户的类型喜好和地区喜好
+     * @param id 用户id
+     * @return 用户的类型喜好和地区喜好
+     */
+    Map<String, List<?>> getTypesAndRegions(Long id);
 
     /**
      * 更新用户昵称
@@ -28,7 +56,7 @@ public interface UserService extends IService<User> {
      * @param nickname 新用户昵称
      * @return 更新成功或失败信息
      */
-    Result<?> updateNickname(String nickname);
+    int updateNickname(String nickname);
 
     /**
      * 更新用户性别
@@ -36,6 +64,6 @@ public interface UserService extends IService<User> {
      * @param username 用户账号，唯一标识
      * @return 更新成功或失败信息
      */
-    Result<?> updateSex(String sexName, String username);
+    int updateSex(String sexName, String username);
 
 }

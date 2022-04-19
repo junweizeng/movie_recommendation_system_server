@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 /**
- * 
+ * @author zjw
  * @TableName comment
  */
 @TableName(value ="comment")
@@ -40,8 +40,9 @@ public class Comment implements Serializable {
 
     /**
      * 评价时间
+     * 注解用于转化时间戳
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")    //转化时间戳
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Timestamp time;
 
     /**

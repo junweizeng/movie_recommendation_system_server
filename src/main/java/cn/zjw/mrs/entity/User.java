@@ -11,7 +11,7 @@ import java.io.Serializable;
 import lombok.Data;
 
 /**
- * 
+ * @author zjw
  * @TableName user
  */
 @TableName(value ="user")

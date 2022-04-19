@@ -18,9 +18,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import javax.annotation.Resource;
 
 /**
+ * @author zjw
  * @Classname SecurityConfig
  * @Date 2022/4/11 16:34
- * @Created by zjw
  * @Description
  */
 @Configuration

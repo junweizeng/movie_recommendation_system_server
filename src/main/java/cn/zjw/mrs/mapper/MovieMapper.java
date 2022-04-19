@@ -19,8 +19,18 @@ import java.util.List;
 @Repository
 public interface MovieMapper extends BaseMapper<Movie> {
 
+    /**
+     * 查询某部电影的“喜欢这部电影的人也喜欢。。”的电影列表
+     * @param id 电影id
+     * @return “喜欢这部电影的人也喜欢。。”电影列表
+     */
     List<MovieCardVo> selectRecommendedMoviesByMovieId(Long id);
 
+    /**
+     * 查询某个用户评价过的若干电影基本信息
+     * @param uid 用户id
+     * @return 评价过的若干电影基本信息
+     */
     List<ReviewedMovieStripVo> selectAllReviewedMoviesByUserId(Long uid);
 }
 

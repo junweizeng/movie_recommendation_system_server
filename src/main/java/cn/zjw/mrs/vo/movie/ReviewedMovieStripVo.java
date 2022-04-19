@@ -6,9 +6,9 @@ import lombok.Data;
 import java.sql.Timestamp;
 
 /**
+ * @author zjw
  * @Classname ReviewedMovieStripVo
  * @Date 2022/4/18 21:32
- * @Created by zjw
  * @Description 评价过的电影
  */
 @Data
@@ -41,7 +41,8 @@ public class ReviewedMovieStripVo {
 
     /**
      * 评价时间
+     * 注解用于转化时间戳
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")    //转化时间戳
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Timestamp time;
 }

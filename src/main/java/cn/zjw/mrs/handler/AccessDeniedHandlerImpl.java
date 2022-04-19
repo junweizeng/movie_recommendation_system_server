@@ -14,9 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
+ * @author zjw
  * @Classname AccessDeniedHandlerImpl
  * @Date 2022/4/11 21:31
- * @Created by zjw
  * @Description 自定义异常处理，当授权失败时会处理异常
  */
 

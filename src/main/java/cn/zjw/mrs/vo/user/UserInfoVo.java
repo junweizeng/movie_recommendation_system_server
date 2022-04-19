@@ -6,9 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+ * @author zjw
  * @Classname UserInfoVo
  * @Date 2022/4/12 13:53
- * @Created by zjw
  * @Description
  */
 @Data

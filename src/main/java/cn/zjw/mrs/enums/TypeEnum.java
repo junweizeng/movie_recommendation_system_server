@@ -4,13 +4,14 @@ import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.Getter;
 
 /**
+ * @author zjw
  * @Classname TypeEnum
  * @Date 2022/4/12 22:48
- * @Created by zjw
  * @Description
  */
 @Getter
 public enum TypeEnum {
+    // 类型代码 —— 类型名称
     DRAMA(1, "剧情"),
     COMEDY(2, "喜剧"),
     ACTION(3, "动作"),
@@ -33,8 +34,11 @@ public enum TypeEnum {
     MARTIAL(20, "武侠"),
     OTHER(21, "其他");
 
+    /**
+     * 将注解所标识的属性的值存储到数据库中
+     */
     @EnumValue
-    private final Integer type; // 将注解所标识的属性的值存储到数据库中
+    private final Integer type;
     private final String typeName;
 
     TypeEnum(Integer type, String typeName) {

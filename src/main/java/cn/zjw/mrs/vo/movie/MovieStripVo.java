@@ -3,9 +3,9 @@ package cn.zjw.mrs.vo.movie;
 import lombok.Data;
 
 /**
+ * @author zjw
  * @Classname MovieStripVo
  * @Date 2022/4/18 14:46
- * @Created by zjw
  * @Description 电影长条
  */
 @Data

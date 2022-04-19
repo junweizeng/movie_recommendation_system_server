@@ -66,7 +66,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         // 如果认证通过了，使用userid生成一个jwt，jwt存入Result返回
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         String userId = loginUser.getUser().getId().toString();
-        String jwt = JwtUtil.createJWT(userId);
+        String jwt = JwtUtil.createJwt(userId);
 
         // 把完整的用户信息存入redis，userid作为可以
         redisCache.setCacheObject("login:" + userId, loginUser);
@@ -102,7 +102,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         User res = userMapper.selectOne(queryWrapper);
         System.out.println("测试:" + res);
         if (!Objects.isNull(res)) {
-            return Result.error(-1, "用户名已存在");
+            return Result.error("用户名已存在");
         }
         // 对密码进行BCrypt加密后存入数据库中
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -113,31 +113,29 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public Result<?> getUserInfo(String username) {
-        User user = userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, username));
-
-        UserInfoVo userInfoVo = new UserInfoVo(
+    public UserInfoVo getUserInfo(Long id) {
+        User user = userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getId, id));
+        return new UserInfoVo(
                 user.getId(),
                 user.getUsername(),
                 user.getNickname(),
                 PicUrlUtil.getFullAvatarUrl(user.getAvatar()),
                 user.getSex().getSexName());
-        return Result.success(userInfoVo);
     }
 
     @Override
-    public Result<?> getTypesAndRegions(Long id) {
+    public Map<String, List<?>> getTypesAndRegions(Long id) {
         List<String> types = userMapper.selectUserTypes(id);
         List<String> regions = userMapper.selectUserRegions(id);
 
-        Map<String, List<?>> res = new HashMap<>();
+        Map<String, List<?>> res = new HashMap<>(2);
         res.put("types", types);
         res.put("regions", regions);
-        return Result.success(res);
+        return res;
     }
 
     @Override
-    public Result<?> updateNickname(String nickname) {
+    public int updateNickname(String nickname) {
         // 获取SecurityHolder中的用户id
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
@@ -145,25 +143,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         int update = userMapper.update(null, new LambdaUpdateWrapper<User>()
                 .set(User::getNickname, nickname).eq(User::getId, uid));
-
         if (update == 0) {
-            return Result.error(-1, "昵称更新失败(┬┬﹏┬┬)");
+            return 0;
         }
 
         // 将评论中所有id为uid的记录的nickname改为更新后的nickname
         commentMapper.update(null, new LambdaUpdateWrapper<Comment>()
                 .set(Comment::getNickname, nickname).eq(Comment::getUid, uid));
-        return Result.success("昵称更新成功(‾◡◝)", null);
+        return 1;
     }
 
     @Override
-    public Result<?> updateSex(String sexName, String username) {
+    public int updateSex(String sexName, String username) {
         int update = userMapper.update(null, new LambdaUpdateWrapper<User>()
                 .set(User::getSex, SexEnum.findSexBySexName(sexName)).eq(User::getUsername, username));
         if (update == 0) {
-            return Result.error(-1, "性别更新失败(┬┬﹏┬┬)");
+            return 0;
         }
-        return Result.success("性别更新成功(‾◡◝)", null);
+        return 1;
     }
 }
 

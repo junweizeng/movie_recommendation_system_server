@@ -20,9 +20,9 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
+ * @author zjw
  * @Classname JwtAuthenticationTokenFilter
  * @Date 2022/4/11 19:50
- * @Created by zjw
  * @Description 定义jwt认证过滤器
  */
 
@@ -44,7 +44,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         // 解析token
         String userid;
         try {
-            Claims claims = JwtUtil.parseJWT(token);
+            Claims claims = JwtUtil.parseJwt(token);
             userid = claims.getSubject();
         } catch (Exception e) {
             e.printStackTrace();

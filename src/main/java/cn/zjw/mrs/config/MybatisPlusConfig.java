@@ -9,13 +9,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * @author zjw
  * @Classname MybatisPlusConfig
  * @Date 2022/4/7 10:59
- * @Created by zjw
  * @Description
+ *
+ * MapperScan 用于扫描指定包下的Mapper接口
  */
 @Configuration
-// 用于扫描指定包下的Mapper接口
 @MapperScan("cn.zjw.mrs.mapper")
 public class MybatisPlusConfig {
 

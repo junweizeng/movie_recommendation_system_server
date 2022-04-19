@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * @author zjw
  * @Classname MovieController
  * @Date 2022/4/7 12:58
- * @Created by zjw
  * @Description
  */
 @RestController
@@ -69,7 +69,7 @@ public class MovieController {
     public Result<?> getRecommendedMovies(@RequestParam Long id) {
         Long did = movieService.getById(id).getDid();
         List<MovieCardVo> movies = movieService.getRecommendedMoviesByMovieId(did);
-        Map<String, List<MovieCardVo>> res = new HashMap<>();
+        Map<String, List<MovieCardVo>> res = new HashMap<>(1);
         res.put("movies", movies);
         return Result.success(res);
     }

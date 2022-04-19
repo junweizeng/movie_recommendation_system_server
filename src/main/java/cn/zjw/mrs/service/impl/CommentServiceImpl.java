@@ -39,13 +39,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
     @Resource
     private UserMapper userMapper;
 
-    /**
-     * 添加评价信息，如果评价信息已经存在，则更新评价信息
-     * @param comment 评价信息
-     * @return
-     */
     @Override
-    public Result<?> addComment(Comment comment, String username) {
+    public Integer addComment(Comment comment, String username) {
         // 获取当前登录用户的基本信息
         User user = userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, username));
         Long uid = user.getId();
@@ -54,7 +49,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
         comment.setType(0);
         comment.setAgree(0);
         comment.setNickname(nickname);
-        comment.setTime(new Timestamp(System.currentTimeMillis())); // 设置当前时间
+        // 设置当前时间
+        comment.setTime(new Timestamp(System.currentTimeMillis()));
 
         Comment isCommentExists = commentMapper.selectOne(
                 new LambdaQueryWrapper<Comment>()
@@ -66,49 +62,43 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
             comment.setAgree(isCommentExists.getAgree());
             int update = commentMapper.update(comment,
                     new LambdaUpdateWrapper<Comment>()
-                            .eq(Comment::getUid, comment.getUid())      // 更新数据条件，判断uid和mid是否匹配
+                            // 更新数据条件，判断uid和mid是否匹配
+                            .eq(Comment::getUid, comment.getUid())
                             .eq(Comment::getMid, comment.getMid()));
             if (update <= 0) {
-                return Result.error(-1, "评价更新失败，请稍后重试(┬┬﹏┬┬)");
+                return -1;
             } else {
-                return Result.success("评价更新成功(‾◡◝)", "");
+                return 1;
             }
         }
 
         // 如果评价信息不存在，则插入评价信息
         int isInsert = commentMapper.insert(comment);
         if (isInsert <= 0) {
-            return Result.error(-1, "评价失败(┬┬﹏┬┬)");
+            return -2;
         } else {
-            return Result.success("评价成功(‾◡◝)", null);
+            return 2;
         }
     }
 
     @Override
-    public Result<?> getOwnComment(Long mid) {
-        // 获取SecurityHolder中的用户id
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
-        Long uid = loginUser.getUser().getId();
-
+    public CommentStripVo getOwnComment(Long uid, Long mid) {
         CommentStripVo commentStripVo = commentMapper.selectOwnCommentByUidAndMid(uid, mid);
         commentStripVo.setAvatar(PicUrlUtil.getFullAvatarUrl(commentStripVo.getAvatar()));
-        return Result.success(commentStripVo);
+        return commentStripVo;
     }
 
     @Override
-    public Result<?> getCommentsByMovieId(Long mid) {
+    public List<CommentStripVo> getCommentsByMovieId(Long mid) {
         List<CommentStripVo> commentStripVos = commentMapper.selectCommentsByMovieId(mid);
         for (CommentStripVo comment: commentStripVos) {
             comment.setAvatar(PicUrlUtil.getFullAvatarUrl(comment.getAvatar()));
         }
-        Map<String, List<CommentStripVo>> res = new HashMap<>();
-        res.put("comments", commentStripVos);
-        return Result.success(res);
+        return commentStripVos;
     }
 
     @Override
-    public Result<?> getOwnCommentMovieMoments(Long uid) {
+    public List<CommentMovieVo> getOwnCommentMovieMoments(Long uid) {
         List<CommentMovieVo> commentMovieVos = commentMapper.selectOwnCommentMovieMoments(uid);
         // 获取头像和电影海报完整的url
         for (CommentMovieVo commentMovieVo: commentMovieVos) {
@@ -117,7 +107,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
             String pic = commentMovieVo.getMovieStripVo().getPic();
             commentMovieVo.getMovieStripVo().setPic(PicUrlUtil.getFullMoviePicUrl(pic));
         }
-        return Result.success(commentMovieVos);
+        return commentMovieVos;
     }
 }
 

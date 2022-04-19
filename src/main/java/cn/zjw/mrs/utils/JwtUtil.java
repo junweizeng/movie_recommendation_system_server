@@ -12,16 +12,22 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
+ * @author zjw
  * JWT工具类
  */
 public class JwtUtil {
 
-    // 有效期为
-    public static final Long JWT_TTL = 3 * 24 * 60 * 60 *1000L;// 3天
-    // 设置秘钥明文
+    /**
+     * 有效期为: 3天
+     */
+    public static final Long JWT_TTL = 3 * 24 * 60 * 60 *1000L;
+
+    /**
+     * 设置秘钥明文
+     */
     public static final String JWT_KEY = "zjw";
 
-    public static String getUUID(){
+    public static String getUuid(){
         String token = UUID.randomUUID().toString().replaceAll("-", "");
         return token;
     }
@@ -31,8 +37,9 @@ public class JwtUtil {
      * @param subject token中要存放的数据（json格式）
      * @return
      */
-    public static String createJWT(String subject) {
-        JwtBuilder builder = getJwtBuilder(subject, null, getUUID());// 设置过期时间
+    public static String createJwt(String subject) {
+        // 设置过期时间
+        JwtBuilder builder = getJwtBuilder(subject, null, getUuid());
         return builder.compact();
     }
 
@@ -42,8 +49,9 @@ public class JwtUtil {
      * @param ttlMillis token超时时间
      * @return
      */
-    public static String createJWT(String subject, Long ttlMillis) {
-        JwtBuilder builder = getJwtBuilder(subject, ttlMillis, getUUID());// 设置过期时间
+    public static String createJwt(String subject, Long ttlMillis) {
+        // 设置过期时间
+        JwtBuilder builder = getJwtBuilder(subject, ttlMillis, getUuid());
         return builder.compact();
     }
 
@@ -58,11 +66,16 @@ public class JwtUtil {
         long expMillis = nowMillis + ttlMillis;
         Date expDate = new Date(expMillis);
         return Jwts.builder()
-                .setId(uuid)             // 唯一的ID
-                .setSubject(subject)     // 主题  可以是JSON数据
-                .setIssuer("sg")         // 签发者
-                .setIssuedAt(now)        // 签发时间
-                .signWith(signatureAlgorithm, secretKey) // 使用HS256对称加密算法签名, 第二个参数为秘钥
+                // 唯一的ID
+                .setId(uuid)
+                // 主题  可以是JSON数据
+                .setSubject(subject)
+                // 签发者
+                .setIssuer("sg")
+                // 签发时间
+                .setIssuedAt(now)
+                // 使用HS256对称加密算法签名, 第二个参数为秘钥
+                .signWith(signatureAlgorithm, secretKey)
                 .setExpiration(expDate);
     }
 
@@ -73,18 +86,19 @@ public class JwtUtil {
      * @param ttlMillis
      * @return
      */
-    public static String createJWT(String id, String subject, Long ttlMillis) {
-        JwtBuilder builder = getJwtBuilder(subject, ttlMillis, id);// 设置过期时间
+    public static String createJwt(String id, String subject, Long ttlMillis) {
+        // 设置过期时间
+        JwtBuilder builder = getJwtBuilder(subject, ttlMillis, id);
         return builder.compact();
     }
 
     public static void main(String[] args) throws Exception {
         // 加密
-        String jwt = createJWT("12345");
+        String jwt = createJwt("12345");
         System.out.println(jwt);
 
         // 解密
-        Claims claims = parseJWT("eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIzN2EzM2YwMDQ0NGQ0NWM1YWJhNzYzMjEzMWVmZmFkNCIsInN1YiI6IjEiLCJpc3MiOiJzZyIsImlhdCI6MTY0OTY3NjQzNCwiZXhwIjoxNjQ5NjgwMDM0fQ.LmxZrBEEvEvXf5OQ3mUohre6sRlawlz4hpqhU-_In2s");
+        Claims claims = parseJwt("eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIzN2EzM2YwMDQ0NGQ0NWM1YWJhNzYzMjEzMWVmZmFkNCIsInN1YiI6IjEiLCJpc3MiOiJzZyIsImlhdCI6MTY0OTY3NjQzNCwiZXhwIjoxNjQ5NjgwMDM0fQ.LmxZrBEEvEvXf5OQ3mUohre6sRlawlz4hpqhU-_In2s");
         String subject = claims.getSubject();
         System.out.println(subject);
     }
@@ -106,7 +120,7 @@ public class JwtUtil {
      * @return
      * @throws Exception
      */
-    public static Claims parseJWT(String jwt) throws Exception {
+    public static Claims parseJwt(String jwt) throws Exception {
         SecretKey secretKey = generalKey();
         return Jwts.parser()
                 .setSigningKey(secretKey)

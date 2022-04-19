@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 import lombok.Data;
 
 /**
- * 
+ * @author zjw
  * @TableName movie
  */
 @TableName(value ="movie")

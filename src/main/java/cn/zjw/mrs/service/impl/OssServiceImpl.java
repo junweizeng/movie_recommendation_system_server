@@ -22,9 +22,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 /**
+ * @author zjw
  * @Classname OssServiceImpl
  * @Date 2022/4/17 13:51
- * @Created by zjw
  * @Description
  */
 @Service
@@ -53,7 +53,7 @@ public class OssServiceImpl implements OssService {
     }
 
     @Override
-    public Result<?> updateAvatar(String username, MultipartFile uploadFile) {
+    public boolean updateAvatar(String username, MultipartFile uploadFile) {
         String dirSuffix = getAvatarObjectName();
         String objectName = dirPrefix + dirSuffix;
         try {
@@ -66,21 +66,21 @@ public class OssServiceImpl implements OssService {
             System.out.println("Error Code:" + oe.getErrorCode());
             System.out.println("Request ID:" + oe.getRequestId());
             System.out.println("Host ID:" + oe.getHostId());
-            return Result.error(-1, "头像上传失败(┬┬﹏┬┬)");
+            return false;
         } catch (ClientException ce) {
             System.out.println("Caught an ClientException, which means the client encountered "
                     + "a serious internal problem while trying to communicate with OSS, "
                     + "such as not being able to access the network.");
             System.out.println("Error Message:" + ce.getMessage());
-            return Result.error(-1, "头像上传失败(┬┬﹏┬┬)");
+            return false;
         } catch (IOException e) {
             e.printStackTrace();
-            return Result.error(-1, "头像上传失败(┬┬﹏┬┬)");
+            return false;
         }
 
         // 头像上传到oss后，将路径存入数据库中
         userMapper.update(null, new LambdaUpdateWrapper<User>()
                 .set(User::getAvatar, dirSuffix).eq(User::getUsername, username));
-        return Result.success("头像修改成功(‾◡◝)", null);
+        return true;
     }
 }

@@ -14,9 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
+ * @author zjw
  * @Classname AuthenticationEntryPointImpl
  * @Date 2022/4/11 21:22
- * @Created by zjw
  * @Description 自定义异常处理，当认证失败时会处理异常
  */
 @Component

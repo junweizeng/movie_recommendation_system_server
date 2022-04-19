@@ -4,19 +4,25 @@ import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.Getter;
 
 /**
+ * @author zjw
  * @Classname SexEnum
  * @Date 2022/4/11 23:40
- * @Created by zjw
  * @Description
  */
 @Getter
 public enum SexEnum {
+    // 男
     MALE(1, "男"),
+    // 女
     FEMALE(0, "女"),
+    // 保密
     SECRET(2, "保密");
 
+    /**
+     * 将注解所标识的属性的值存储到数据库中
+     */
     @EnumValue
-    private final Integer sex; // 将注解所标识的属性的值存储到数据库中
+    private final Integer sex;
     private final String sexName;
 
     SexEnum(Integer sex, String sexName) {
