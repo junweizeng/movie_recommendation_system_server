@@ -41,4 +41,11 @@ public interface MovieService extends IService<Movie> {
      * @return 评价过的电影条目
      */
     List<ReviewedMovieStripVo> getAllReviewedMoviesByUserId(Long uid);
+
+    /**
+     * 获取搜索关键字模糊匹配的电影名称列表
+     * @param keywords 搜索关键字
+     * @return 电影名称列表
+     */
+    List<String> getMatchMovieName(String keywords);
 }

@@ -86,4 +86,15 @@ public class MovieController {
         List<ReviewedMovieStripVo> reviewedMovies = movieService.getAllReviewedMoviesByUserId(uid);
         return Result.success(reviewedMovies);
     }
+
+    /**
+     * 获取搜索关键字模糊匹配的电影名称列表
+     * @param keywords 搜索关键字
+     * @return 模糊匹配查询到的电影名称列表
+     */
+    @GetMapping("/match/name")
+    public Result<?> getMatchMovieName(@RequestParam(defaultValue = "我打赌你什么都查不到") String keywords) {
+        List<String> names = movieService.getMatchMovieName(keywords);
+        return Result.success(names);
+    }
 }

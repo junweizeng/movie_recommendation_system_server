@@ -14,6 +14,7 @@ import cn.zjw.mrs.mapper.MovieMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -67,6 +68,17 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie>
             movie.setPic(PicUrlUtil.getFullMoviePicUrl(movie.getPic()));
         }
         return reviewedMovies;
+    }
+
+    @Override
+    public List<String> getMatchMovieName(String keywords) {
+        List<Movie> movies = movieMapper.selectList(new LambdaQueryWrapper<Movie>().like(Movie::getName, keywords));
+        int len = Math.min(movies.size(), 10);
+        List<String> res = new ArrayList<>();
+        for (int i = 0; i < len; i++) {
+            res.add(movies.get(i).getName());
+        }
+        return res;
     }
 }
 
