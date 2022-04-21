@@ -19,10 +19,14 @@ public enum SexEnum {
     SECRET(2, "保密");
 
     /**
+     * 性别标识
      * 将注解所标识的属性的值存储到数据库中
      */
     @EnumValue
     private final Integer sex;
+    /**
+     * 性别名称
+     */
     private final String sexName;
 
     SexEnum(Integer sex, String sexName) {
@@ -31,9 +35,9 @@ public enum SexEnum {
     }
 
     /**
-     * 通过性别名称查找性别号码
+     * 通过性别名称查找性别标识
      * @param sexName 性别名称
-     * @return 性别号码
+     * @return 性别标识
      */
     public static Integer findSexBySexName (String sexName) {
         for (SexEnum sexEnum : SexEnum.values()) {
@@ -45,8 +49,8 @@ public enum SexEnum {
     }
 
     /**
-     * 通过性别号码查找性别名称
-     * @param sex 性别号码
+     * 通过性别标识查找性别名称
+     * @param sex 性别标识
      * @return 性别名称
      */
     public static String findSexNameBySex (Integer sex) {

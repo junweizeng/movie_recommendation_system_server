@@ -11,34 +11,38 @@ import lombok.Getter;
  */
 @Getter
 public enum TypeEnum {
-    // 类型代码 —— 类型名称
-    DRAMA(1, "剧情"),
-    COMEDY(2, "喜剧"),
-    ACTION(3, "动作"),
-    LOVE(4, "爱情"),
-    SCIENCE_FICTION(5, "科幻"),
-    ANIMATION(6, "动画"),
-    SUSPENSE(7, "悬疑"),
-    THRILLER(8, "惊悚"),
-    HORROR(9, "恐怖"),
-    CRIME(10, "犯罪"),
-    MUSIC(11, "音乐"),
-    SONG_AND_DANCE(12, "歌舞"),
-    BIOGRAPHY(13, "传记"),
-    HISTORY(14, "历史"),
-    WAR(15, "战争"),
-    WEST(16, "西部"),
-    FANTASY(17, "奇幻"),
-    ADVENTURE(18, "冒险"),
-    DISASTER(19, "灾难"),
-    MARTIAL(20, "武侠"),
-    OTHER(21, "其他");
+    // 类型标识 —— 类型名称
+    DRAMA(0, "剧情"),
+    COMEDY(1, "喜剧"),
+    ACTION(2, "动作"),
+    LOVE(3, "爱情"),
+    SCIENCE_FICTION(4, "科幻"),
+    ANIMATION(5, "动画"),
+    SUSPENSE(6, "悬疑"),
+    THRILLER(7, "惊悚"),
+    HORROR(8, "恐怖"),
+    CRIME(9, "犯罪"),
+    MUSIC(10, "音乐"),
+    SONG_AND_DANCE(11, "歌舞"),
+    BIOGRAPHY(12, "传记"),
+    HISTORY(13, "历史"),
+    WAR(14, "战争"),
+    WEST(15, "西部"),
+    FANTASY(16, "奇幻"),
+    ADVENTURE(17, "冒险"),
+    DISASTER(18, "灾难"),
+    MARTIAL(19, "武侠"),
+    OTHER(20, "其他");
 
     /**
+     * 类型标识
      * 将注解所标识的属性的值存储到数据库中
      */
     @EnumValue
     private final Integer type;
+    /**
+     * 类型名称
+     */
     private final String typeName;
 
     TypeEnum(Integer type, String typeName) {
