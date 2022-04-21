@@ -4,7 +4,7 @@ import cn.zjw.mrs.entity.TypeLike;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
-* @author 95758
+* @author zjw
 * @description 针对表【type_like】的数据库操作Service
 * @createDate 2022-04-20 16:13:21
 */

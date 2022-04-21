@@ -49,4 +49,32 @@ public enum TypeEnum {
         this.type = type;
         this.typeName = typeName;
     }
+
+    /**
+     * 通过类型名称查找类型标识
+     * @param typeName 类型名称
+     * @return 类型标识
+     */
+    public static Integer findTypeByTypeName (String typeName) {
+        for (TypeEnum typeEnum : TypeEnum.values()) {
+            if (typeEnum.getTypeName().equals(typeName)) {
+                return typeEnum.getType();
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * 通过类型标识查找类型名称
+     * @param type 类型标识
+     * @return 类型名称
+     */
+    public static String findRegionNameByRegion (Integer type) {
+        for (TypeEnum typeEnum : TypeEnum.values()) {
+            if (typeEnum.getType().equals(type)) {
+                return typeEnum.getTypeName();
+            }
+        }
+        throw new IllegalArgumentException("type is invalid");
+    }
 }

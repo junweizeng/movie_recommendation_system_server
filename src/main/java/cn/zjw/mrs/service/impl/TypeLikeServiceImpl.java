@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
 /**
-* @author 95758
+* @author zjw
 * @description 针对表【type_like】的数据库操作Service实现
 * @createDate 2022-04-20 16:13:21
 */

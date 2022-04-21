@@ -1,14 +1,13 @@
 package cn.zjw.mrs.entity;
 
-import cn.zjw.mrs.enums.RegionEnum;
 import cn.zjw.mrs.enums.SexEnum;
-import cn.zjw.mrs.enums.TypeEnum;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * @author zjw

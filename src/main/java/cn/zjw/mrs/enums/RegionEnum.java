@@ -50,4 +50,31 @@ public enum RegionEnum {
         this.regionName = regionName;
     }
 
+    /**
+     * 通过地区名称查找地区标识
+     * @param regionName 地区名称
+     * @return 地区标识
+     */
+    public static Integer findRegionByRegionName (String regionName) {
+        for (RegionEnum regionEnum : RegionEnum.values()) {
+            if (regionEnum.getRegionName().equals(regionName)) {
+                return regionEnum.getRegion();
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * 通过地区标识查找地区名称
+     * @param region 地区标识
+     * @return 地区名称
+     */
+    public static String findRegionNameByRegion (Integer region) {
+        for (RegionEnum regionEnum : RegionEnum.values()) {
+            if (regionEnum.getRegion().equals(region)) {
+                return regionEnum.getRegionName();
+            }
+        }
+        throw new IllegalArgumentException("region is invalid");
+    }
 }

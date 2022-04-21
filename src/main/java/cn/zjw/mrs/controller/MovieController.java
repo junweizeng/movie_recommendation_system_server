@@ -6,7 +6,6 @@ import cn.zjw.mrs.entity.Result;
 import cn.zjw.mrs.service.MovieService;
 import cn.zjw.mrs.utils.PicUrlUtil;
 import cn.zjw.mrs.vo.movie.MovieCardVo;
-import cn.zjw.mrs.vo.movie.MovieStripVo;
 import cn.zjw.mrs.vo.movie.ReviewedMovieStripVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.security.core.Authentication;

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
-* @author 95758
+* @author zjw
 * @description 针对表【comment】的数据库操作Service
 * @createDate 2022-04-14 19:19:45
 */

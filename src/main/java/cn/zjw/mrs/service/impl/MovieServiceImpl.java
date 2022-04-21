@@ -1,6 +1,5 @@
 package cn.zjw.mrs.service.impl;
 
-import cn.zjw.mrs.entity.Result;
 import cn.zjw.mrs.utils.PicUrlUtil;
 import cn.zjw.mrs.vo.movie.MovieCardVo;
 import cn.zjw.mrs.vo.movie.ReviewedMovieStripVo;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
-* @author 95758
+* @author zjw
 * @description 针对表【movie】的数据库操作Service实现
 * @createDate 2022-04-07 19:01:20
 */

@@ -11,7 +11,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import java.util.List;
 
 /**
-* @author 95758
+* @author zjw
 * @description 针对表【movie】的数据库操作Service
 * @createDate 2022-04-07 19:01:20
 */

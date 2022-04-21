@@ -7,7 +7,7 @@ import cn.zjw.mrs.mapper.RegionLikeMapper;
 import org.springframework.stereotype.Service;
 
 /**
-* @author 95758
+* @author zjw
 * @description 针对表【region_like】的数据库操作Service实现
 * @createDate 2022-04-20 16:13:15
 */
