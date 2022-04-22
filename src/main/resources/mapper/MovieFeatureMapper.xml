@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.zjw.mrs.mapper.MovieFeatureMapper">
+
+    <resultMap id="BaseResultMap" type="cn.zjw.mrs.entity.MovieFeature">
+            <id property="mid" column="mid" jdbcType="BIGINT"/>
+            <result property="matrix" column="matrix" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        mid,matrix
+    </sql>
+</mapper>
