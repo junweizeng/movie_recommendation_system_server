@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.zjw.mrs.mapper.RecommendationMapper">
+
+    <resultMap id="BaseResultMap" type="cn.zjw.mrs.entity.Recommendation">
+            <id property="uid" column="uid" jdbcType="BIGINT"/>
+            <result property="mid" column="mid" jdbcType="BIGINT"/>
+            <result property="idx" column="idx" jdbcType="DOUBLE"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        uid,mid,idx
+    </sql>
+
+    <resultMap id="RecommendedMovieVoResultMap" type="cn.zjw.mrs.vo.movie.RecommendedMovieVo">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="did" column="did" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="directors" column="directors" jdbcType="VARCHAR"/>
+        <result property="actors" column="actors" jdbcType="VARCHAR"/>
+        <result property="types" column="types" jdbcType="VARCHAR"/>
+        <result property="regions" column="regions" jdbcType="VARCHAR"/>
+        <result property="pic" column="pic" jdbcType="VARCHAR"/>
+        <result property="score" column="score" jdbcType="DOUBLE"/>
+        <result property="idx" column="idx" jdbcType="DOUBLE"/>
+    </resultMap>
+    <select id="selectRecommendedMoviesByUserId" resultMap="RecommendedMovieVoResultMap" resultType="cn.zjw.mrs.vo.movie.RecommendedMovieVo">
+        SELECT m.id, m.did, m.name, m.score, m.pic, m.directors, m.actors, m.regions, m.types, r.idx FROM recommendation r
+        JOIN movie m ON m.id = r.mid
+        WHERE r.uid = ${uid}
+        ORDER BY r.idx DESC
+        LIMIT 0, 15
+    </select>
+</mapper>

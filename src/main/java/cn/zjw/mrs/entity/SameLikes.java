@@ -8,22 +8,21 @@ import java.io.Serializable;
 import lombok.Data;
 
 /**
- * @author zjw
- * @TableName movie_feature
+ * 
+ * @TableName same_likes
  */
-@TableName(value ="movie_feature")
+@TableName(value ="same_likes")
 @Data
-public class MovieFeature implements Serializable {
+public class SameLikes implements Serializable {
     /**
-     * 电影id
+     * 电影ID
      */
-    @TableId
-    private Long mid;
+    private Long did;
 
     /**
-     * 电影特征矩阵
+     * 喜欢这部电影的人也喜欢的电影ID
      */
-    private String matrix;
+    private Long sid;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

@@ -3,18 +3,22 @@ package cn.zjw.mrs.controller;
 import cn.zjw.mrs.entity.LoginUser;
 import cn.zjw.mrs.entity.Movie;
 import cn.zjw.mrs.entity.Result;
+import cn.zjw.mrs.entity.SameLikes;
+import cn.zjw.mrs.mapper.MovieMapper;
+import cn.zjw.mrs.mapper.SameLikesMapper;
 import cn.zjw.mrs.service.MovieService;
 import cn.zjw.mrs.utils.PicUrlUtil;
 import cn.zjw.mrs.vo.movie.MovieCardVo;
 import cn.zjw.mrs.vo.movie.ReviewedMovieStripVo;
+import cn.zjw.mrs.vo.movie.relation.CategoryVo;
+import cn.zjw.mrs.vo.movie.relation.LinkVo;
+import cn.zjw.mrs.vo.movie.relation.NodeVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author zjw
@@ -95,5 +99,37 @@ public class MovieController {
     public Result<?> getMatchMovieName(@RequestParam(defaultValue = "我打赌你什么都查不到") String keywords) {
         List<String> names = movieService.getMatchMovieName(keywords);
         return Result.success(names);
+    }
+
+    @Resource
+    private MovieMapper movieMapper;
+    @Resource
+    private SameLikesMapper sameLikesMapper;
+    @GetMapping("/relations")
+    public Result<?> getMovieRelations() {
+        Map<String, List<?>> res = new HashMap<>(2);
+
+        List<CategoryVo> categories = new ArrayList<>();
+        categories.add(new CategoryVo("test"));
+        categories.add(new CategoryVo("test2"));
+
+        List<Movie> movies = movieMapper.selectList(null);
+        List<NodeVo> nodes = new ArrayList<>();
+        for (Movie movie: movies) {
+            nodes.add(new NodeVo(movie.getDid(), movie.getId(), movie.getName(), 1, (int) (movie.getId() % 2)));
+        }
+
+        List<SameLikes> sameLikes = sameLikesMapper.selectList(null);
+        List<LinkVo> links = new ArrayList<>();
+        for (SameLikes s: sameLikes) {
+            LinkVo link = new LinkVo();
+            link.setSource(String.valueOf(s.getDid()));
+            link.setTarget(String.valueOf(s.getSid()));
+            links.add(link);
+        }
+        res.put("categories", categories);
+        res.put("nodes", nodes);
+        res.put("links", links);
+        return Result.success(res);
     }
 }

@@ -1,5 +1,6 @@
 package cn.zjw.mrs.utils;
 
+import cn.zjw.mrs.entity.LoginUser;
 import org.apache.logging.log4j.util.Strings;
 
 /**
@@ -16,7 +17,7 @@ public class PicUrlUtil {
      * @return 完整头像url
      */
     public static String getFullAvatarUrl(String avatar) {
-        String avatarUrl = null;
+        String avatarUrl = "";
         if (Strings.isNotBlank(avatar)) {
             avatarUrl = "https://mrs-zjw.oss-cn-hangzhou.aliyuncs.com/mrs/avatar/" + avatar;
         }
@@ -30,7 +31,7 @@ public class PicUrlUtil {
      * @return 完整电影海报url
      */
     public static String getFullMoviePicUrl(String pic) {
-        String avatarUrl = null;
+        String avatarUrl = "";
         if (Strings.isNotBlank(pic)) {
             avatarUrl = "https://mrs-zjw.oss-cn-hangzhou.aliyuncs.com/mrs/movie/" + pic;
         }

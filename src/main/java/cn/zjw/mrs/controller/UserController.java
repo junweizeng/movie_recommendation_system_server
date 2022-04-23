@@ -61,13 +61,6 @@ public class UserController {
         return Result.success(userInfo);
     }
 
-    @GetMapping("/types/and/regions")
-    public Result<?> getTypesAndRegions(Authentication authentication) {
-        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
-        Map<String, List<?>> typesAndRegions = userService.getTypesAndRegions(loginUser.getUser().getId());
-        return Result.success(typesAndRegions);
-    }
-
     @PutMapping("/update/nickname")
     public Result<?> updateUserNickname(@RequestBody String nickname) {
         if (userService.updateNickname(nickname) == 0) {

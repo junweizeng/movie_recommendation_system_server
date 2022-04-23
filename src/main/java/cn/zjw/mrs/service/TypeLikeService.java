@@ -16,12 +16,4 @@ public interface TypeLikeService extends IService<TypeLike> {
      * @return 更新结果
      */
     int updateUserTypeLike(Long id, int[] types);
-
-    /**
-     * 更新用户电影地区喜好
-     * @param id 用户id
-     * @param regions 用户的电影地区喜好
-     * @return 更新结果
-     */
-    int updateUserRegionLike(Long id, int[] regions);
 }

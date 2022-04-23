@@ -48,4 +48,5 @@ public interface MovieService extends IService<Movie> {
      * @return 电影名称列表
      */
     List<String> getMatchMovieName(String keywords);
+
 }

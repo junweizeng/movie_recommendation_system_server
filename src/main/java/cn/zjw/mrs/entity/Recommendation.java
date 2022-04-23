@@ -5,25 +5,34 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author zjw
- * @TableName movie_feature
+ * @TableName user_recommendation
  */
-@TableName(value ="movie_feature")
+@TableName(value ="recommendation")
 @Data
-public class MovieFeature implements Serializable {
+@AllArgsConstructor
+@NoArgsConstructor
+public class Recommendation implements Serializable {
+    /**
+     * 用户id
+     */
+    private Long uid;
+
     /**
      * 电影id
      */
-    @TableId
     private Long mid;
 
     /**
-     * 电影特征矩阵
+     * 推荐指数
      */
-    private String matrix;
+    private Double idx;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

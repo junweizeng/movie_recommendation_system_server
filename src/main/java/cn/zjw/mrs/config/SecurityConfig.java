@@ -56,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 // 不需要登录可以直接访问
-                .antMatchers("/movie", "/movie/info", "/movie/recommend", "/user/register", "/movie/match/name").permitAll()
+                .antMatchers("/movie", "/movie/info", "/movie/recommend", "/user/register", "/movie/match/name", "/movie/relations").permitAll()
                 // 对于登录接口 允许匿名访问
                 .antMatchers("/user/login").anonymous()
                 // 除上面外的所有请求全部需要鉴权认证

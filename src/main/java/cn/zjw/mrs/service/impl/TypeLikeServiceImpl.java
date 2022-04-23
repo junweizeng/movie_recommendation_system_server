@@ -23,9 +23,6 @@ public class TypeLikeServiceImpl extends ServiceImpl<TypeLikeMapper, TypeLike>
     @Resource
     private TypeLikeMapper typeLikeMapper;
 
-    @Resource
-    private RegionLikeMapper regionLikeMapper;
-
     @Override
     public int updateUserTypeLike(Long id, int[] types) {
         int len = Math.min(types.length, 5);
@@ -33,17 +30,6 @@ public class TypeLikeServiceImpl extends ServiceImpl<TypeLikeMapper, TypeLike>
         int cnt = 0;
         for (int i = 0; i < len; ++ i) {
             cnt += typeLikeMapper.insert(new TypeLike(id, types[i], i));
-        }
-        return cnt;
-    }
-
-    @Override
-    public int updateUserRegionLike(Long id, int[] regions) {
-        int len = Math.min(regions.length, 5);
-        regionLikeMapper.delete(new LambdaQueryWrapper<RegionLike>().eq(RegionLike::getUid, id));
-        int cnt = 0;
-        for (int i = 0; i < len; ++ i) {
-            cnt += regionLikeMapper.insert(new RegionLike(id, regions[i], i));
         }
         return cnt;
     }

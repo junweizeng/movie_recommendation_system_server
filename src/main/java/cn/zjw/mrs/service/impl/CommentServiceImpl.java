@@ -13,6 +13,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.zjw.mrs.entity.Comment;
 import cn.zjw.mrs.service.CommentService;
 import cn.zjw.mrs.mapper.CommentMapper;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -84,7 +85,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
     @Override
     public CommentStripVo getOwnComment(Long uid, Long mid) {
         CommentStripVo commentStripVo = commentMapper.selectOwnCommentByUidAndMid(uid, mid);
-        commentStripVo.setAvatar(PicUrlUtil.getFullAvatarUrl(commentStripVo.getAvatar()));
+        if (!Objects.isNull(commentStripVo)) {
+            commentStripVo.setAvatar(PicUrlUtil.getFullAvatarUrl(commentStripVo.getAvatar()));
+        }
         return commentStripVo;
     }
 

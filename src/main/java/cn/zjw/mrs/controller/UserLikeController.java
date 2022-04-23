@@ -4,10 +4,13 @@ import cn.zjw.mrs.entity.LoginUser;
 import cn.zjw.mrs.entity.Result;
 import cn.zjw.mrs.service.RegionLikeService;
 import cn.zjw.mrs.service.TypeLikeService;
+import cn.zjw.mrs.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author zjw
@@ -24,6 +27,16 @@ public class UserLikeController {
     @Resource
     private TypeLikeService typeLikeService;
 
+    @Resource
+    private UserService userService;
+
+    @GetMapping
+    public Result<?> getTypesAndRegions(Authentication authentication) {
+        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+        Map<String, List<?>> typesAndRegions = userService.getTypesAndRegions(loginUser.getUser().getId());
+        return Result.success(typesAndRegions);
+    }
+
     @PostMapping("/update/types")
     public Result<?> updateUserTypeLike(@RequestBody int[] types, Authentication authentication) {
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
@@ -39,7 +52,7 @@ public class UserLikeController {
     public Result<?> updateUserRegionLike(@RequestBody int[] regions, Authentication authentication) {
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         Long id = loginUser.getUser().getId();
-        int update = typeLikeService.updateUserRegionLike(id, regions);
+        int update = regionLikeService.updateUserRegionLike(id, regions);
         if (update == 0) {
             return Result.success("电影地区喜好更新失败(┬┬﹏┬┬)");
         }

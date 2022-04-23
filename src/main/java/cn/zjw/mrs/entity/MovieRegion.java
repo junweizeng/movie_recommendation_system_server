@@ -8,7 +8,7 @@ import java.io.Serializable;
 import lombok.Data;
 
 /**
- * 
+ * @author zjw
  * @TableName movie_region
  */
 @TableName(value ="movie_region")
