@@ -67,4 +67,22 @@
         WHERE c.uid = ${id}
         ORDER BY c.time DESC
     </select>
+
+    <resultMap id="MovieCardVoResultMap" type="cn.zjw.mrs.vo.movie.MovieCardVo">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="score" column="score" jdbcType="DOUBLE"/>
+        <result property="pic" column="pic" jdbcType="VARCHAR"/>
+        <result property="num" column="num" jdbcType="BIGINT"/>
+    </resultMap>
+    <select id="selectMostWatchedMovies" resultMap="MovieCardVoResultMap" resultType="cn.zjw.mrs.vo.movie.MovieCardVo">
+        SELECT id, name, score, pic, num FROM movie
+        ORDER BY num DESC
+        LIMIT 0, 10
+    </select>
+    <select id="selectHighestRatedMovies" resultType="cn.zjw.mrs.vo.movie.MovieCardVo">
+        SELECT id, name, score, pic, num FROM movie
+        ORDER BY score DESC
+        LIMIT 0, 10
+    </select>
 </mapper>

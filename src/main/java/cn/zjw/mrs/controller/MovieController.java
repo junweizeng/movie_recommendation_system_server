@@ -9,6 +9,7 @@ import cn.zjw.mrs.mapper.SameLikesMapper;
 import cn.zjw.mrs.service.MovieService;
 import cn.zjw.mrs.utils.PicUrlUtil;
 import cn.zjw.mrs.vo.movie.MovieCardVo;
+import cn.zjw.mrs.vo.movie.MovieStripVo;
 import cn.zjw.mrs.vo.movie.ReviewedMovieStripVo;
 import cn.zjw.mrs.vo.movie.relation.CategoryVo;
 import cn.zjw.mrs.vo.movie.relation.LinkVo;
@@ -101,12 +102,33 @@ public class MovieController {
         return Result.success(names);
     }
 
+    /**
+     * 获取最多人看过的（评论过的）电影列表
+     * @return 最多人看过的（评论过的）电影列表
+     */
+    @GetMapping("/most/watched")
+    public Result<?> getMostWatchedMovies() {
+        List<MovieCardVo> movies = movieService.getMostWatchedMovies();
+        return Result.success(movies);
+    }
+
+    /**
+     * 获得评分最高的前n部电影列表
+     * @return 评分最高的前n部电影列表
+     */
+    @GetMapping("/highest/score")
+    public Result<?> getHighestRatedMovies() {
+        List<MovieCardVo> movies = movieService.getHighestRatedMovies();
+        return Result.success(movies);
+    }
+
     @Resource
     private MovieMapper movieMapper;
     @Resource
     private SameLikesMapper sameLikesMapper;
     @GetMapping("/relations")
     public Result<?> getMovieRelations() {
+        // TODO 测试使用
         Map<String, List<?>> res = new HashMap<>(2);
 
         List<CategoryVo> categories = new ArrayList<>();

@@ -13,6 +13,7 @@ import cn.zjw.mrs.mapper.MovieMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,6 +79,24 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie>
             res.add(movies.get(i).getName());
         }
         return res;
+    }
+
+    @Override
+    public List<MovieCardVo> getMostWatchedMovies() {
+        List<MovieCardVo> movies = movieMapper.selectMostWatchedMovies();
+        for (MovieCardVo movie: movies) {
+            movie.setPic(PicUrlUtil.getFullMoviePicUrl(movie.getPic()));
+        }
+        return movies;
+    }
+
+    @Override
+    public List<MovieCardVo> getHighestRatedMovies() {
+        List<MovieCardVo> movies = movieMapper.selectHighestRatedMovies();
+        for (MovieCardVo movie: movies) {
+            movie.setPic(PicUrlUtil.getFullMoviePicUrl(movie.getPic()));
+        }
+        return movies;
     }
 }
 

@@ -49,4 +49,15 @@ public interface MovieService extends IService<Movie> {
      */
     List<String> getMatchMovieName(String keywords);
 
+    /**
+     * 获取最多人看过的（评论过的）电影列表
+     * @return 最多人看过的（评论过的）电影列表
+     */
+    List<MovieCardVo> getMostWatchedMovies();
+
+    /**
+     * 获得评分最高的前n部电影列表
+     * @return 评分最高的前n部电影列表
+     */
+    List<MovieCardVo> getHighestRatedMovies();
 }

@@ -17,4 +17,6 @@ public class MovieCardVo {
     private double score;
     
     private String pic;
+
+    private Long num;
 }

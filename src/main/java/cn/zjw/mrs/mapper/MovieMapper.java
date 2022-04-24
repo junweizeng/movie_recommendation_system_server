@@ -32,6 +32,18 @@ public interface MovieMapper extends BaseMapper<Movie> {
      * @return 评价过的若干电影基本信息
      */
     List<ReviewedMovieStripVo> selectAllReviewedMoviesByUserId(Long uid);
+
+    /**
+     * 查询最多人看过的（评价过）的电影列表
+     * @return 最多人看过的（评价过）的电影列表
+     */
+    List<MovieCardVo> selectMostWatchedMovies();
+
+    /**
+     * 查询评分最高的前n部电影列表
+     * @return 评分最高的前n部电影列表
+     */
+    List<MovieCardVo> selectHighestRatedMovies();
 }
 
 
