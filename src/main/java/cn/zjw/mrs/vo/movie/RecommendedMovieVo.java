@@ -23,7 +23,7 @@ public class RecommendedMovieVo {
 
     private String name;
 
-    private String score;
+    private Double score;
 
     private String pic;
 

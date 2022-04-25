@@ -13,4 +13,17 @@
     <sql id="Base_Column_List">
         mid,rid,degree
     </sql>
+    <select id="selectRecommendedMoviesRegionsByUserId" resultType="cn.zjw.mrs.entity.MovieRegion">
+        SELECT r.mid, mr.rid FROM movie_region mr
+        JOIN recommendation r ON mr.mid = r.mid
+        WHERE r.uid = ${uid}
+        ORDER BY mr.rid;
+    </select>
+    <select id="selectWatchedMoviesRegionsByUserId" resultType="cn.zjw.mrs.entity.MovieRegion">
+        SELECT mr.rid, c.mid FROM movie_region mr
+        JOIN comment c ON mr.mid = c.mid
+        WHERE c.uid = ${uid}
+          AND c.mid IN (SELECT mid FROM (SELECT mid FROM `comment` WHERE uid = ${uid} LIMIT ${num}) cc)
+        ORDER BY mr.rid;
+    </select>
 </mapper>

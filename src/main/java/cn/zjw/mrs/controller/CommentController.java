@@ -4,13 +4,10 @@ import cn.zjw.mrs.entity.Comment;
 import cn.zjw.mrs.entity.LoginUser;
 import cn.zjw.mrs.entity.Result;
 import cn.zjw.mrs.service.CommentService;
-import cn.zjw.mrs.service.ContentBasedRecommendationService;
-import cn.zjw.mrs.service.impl.ContentBasedRecommendationServiceImpl;
+import cn.zjw.mrs.service.RecommendationService;
 import cn.zjw.mrs.vo.comment.CommentMovieVo;
 import cn.zjw.mrs.vo.comment.CommentStripVo;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -31,7 +28,7 @@ public class CommentController {
     private CommentService commentService;
 
     @Resource
-    private ContentBasedRecommendationService contentBasedRecommendationService;
+    private RecommendationService recommendationService;
 
     @PostMapping
     private Result<?> addComment(@RequestBody Comment comment, Principal principal, Authentication authentication) {
@@ -42,12 +39,12 @@ public class CommentController {
         switch (update) {
             case -1: return Result.error("评价更新失败，请稍后重试(┬┬﹏┬┬)");
             case 1: {
-                contentBasedRecommendationService.updateRecommendation(uid);
+                recommendationService.updateRecommendation(uid);
                 return Result.success("评价更新成功(‾◡◝)");
             }
             case -2: return Result.error("评价失败(┬┬﹏┬┬)");
             default: {
-                contentBasedRecommendationService.updateRecommendation(uid);
+                recommendationService.updateRecommendation(uid);
                 return Result.success("评价成功(‾◡◝)");
             }
         }

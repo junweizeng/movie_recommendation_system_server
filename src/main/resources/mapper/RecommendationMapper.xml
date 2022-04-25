@@ -31,6 +31,6 @@
         JOIN movie m ON m.id = r.mid
         WHERE r.uid = ${uid}
         ORDER BY r.idx DESC
-        LIMIT 0, 15
+        LIMIT 0, ${num}
     </select>
 </mapper>

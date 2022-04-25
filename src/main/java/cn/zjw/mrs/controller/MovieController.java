@@ -138,7 +138,7 @@ public class MovieController {
         List<Movie> movies = movieMapper.selectList(null);
         List<NodeVo> nodes = new ArrayList<>();
         for (Movie movie: movies) {
-            nodes.add(new NodeVo(movie.getDid(), movie.getId(), movie.getName(), 1, (int) (movie.getId() % 2)));
+//            nodes.add(new NodeVo(movie.getDid(), movie.getId(), movie.getName(), "1", (int) (movie.getId() % 2)), "", "");
         }
 
         List<SameLikes> sameLikes = sameLikesMapper.selectList(null);

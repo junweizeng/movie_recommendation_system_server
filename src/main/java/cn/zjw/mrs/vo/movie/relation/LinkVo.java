@@ -24,4 +24,9 @@ public class LinkVo {
      * 终点
      */
     private String target;
+
+    /**
+     * 相似指数
+     */
+    private Double idx;
 }

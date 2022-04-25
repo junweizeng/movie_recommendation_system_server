@@ -1,6 +1,6 @@
 package cn.zjw.mrs;
 
-import cn.zjw.mrs.service.ContentBasedRecommendationService;
+import cn.zjw.mrs.service.RecommendationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -15,7 +15,7 @@ import javax.annotation.Resource;
 @SpringBootTest
 public class RecommendTest {
     @Resource
-    private ContentBasedRecommendationService service;
+    private RecommendationService service;
 
     @Test
     public void testUpdateRecommendation() {

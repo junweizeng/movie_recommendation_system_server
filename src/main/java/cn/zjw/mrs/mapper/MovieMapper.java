@@ -27,23 +27,33 @@ public interface MovieMapper extends BaseMapper<Movie> {
     List<MovieCardVo> selectRecommendedMoviesByMovieId(Long id);
 
     /**
-     * 查询某个用户评价过的若干电影基本信息
+     * 查询某个用户评价过的所有电影基本信息
      * @param uid 用户id
-     * @return 评价过的若干电影基本信息
+     * @return 评价过的所有电影基本信息
      */
     List<ReviewedMovieStripVo> selectAllReviewedMoviesByUserId(Long uid);
 
     /**
-     * 查询最多人看过的（评价过）的电影列表
+     * 查询某个用户最近评价过的若干电影基本信息
+     * @param uid 用户id
+     * @param num  最近评价的前num部电影
+     * @return 评价过的若干电影基本信息
+     */
+    List<ReviewedMovieStripVo> selectSomeReviewedMoviesByUserId(Long uid, Integer num);
+
+    /**
+     * 查询最多人看过的（评价过）的电影列表（前num部）
+     * @param num 要查询的电影数量
      * @return 最多人看过的（评价过）的电影列表
      */
-    List<MovieCardVo> selectMostWatchedMovies();
+    List<MovieCardVo> selectMostWatchedMovies(Integer num);
 
     /**
      * 查询评分最高的前n部电影列表
+     * @param num 要查询的电影数量
      * @return 评分最高的前n部电影列表
      */
-    List<MovieCardVo> selectHighestRatedMovies();
+    List<MovieCardVo> selectHighestRatedMovies(Integer num);
 }
 
 

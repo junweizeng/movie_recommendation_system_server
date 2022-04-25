@@ -29,7 +29,6 @@
             <result property="introduction" column="introduction" jdbcType="VARCHAR"/>
             <result property="pic" column="pic" jdbcType="VARCHAR"/>
     </resultMap>
-
     <sql id="Base_Column_List">
         id,did,name,
         year,directors,writers,
@@ -40,7 +39,6 @@
         three,two,one,
         introduction,pic
     </sql>
-
     <select id="selectRecommendedMoviesByMovieId" resultType="cn.zjw.mrs.vo.movie.MovieCardVo">
         SELECT distinct m.id, m.name, m.score, m.pic from movie m
         JOIN same_likes sl ON m.did = sl.sid
@@ -67,6 +65,13 @@
         WHERE c.uid = ${id}
         ORDER BY c.time DESC
     </select>
+    <select id="selectSomeReviewedMoviesByUserId" resultMap="ReviewedMovieVoResultMap" resultType="cn.zjw.mrs.vo.movie.ReviewedMovieStripVo">
+        SELECT m.id, m.did, m.name, m.score m_score, m.pic, m.directors, m.actors, m.regions, m.types, c.score u_score, c.time FROM `comment` c
+        JOIN movie m ON m.id = c.mid
+        WHERE c.uid = ${uid}
+          AND c.mid IN (SELECT mid FROM (SELECT mid FROM `comment` WHERE uid = ${uid} LIMIT ${num}) cc)
+        ORDER BY c.time DESC
+    </select>
 
     <resultMap id="MovieCardVoResultMap" type="cn.zjw.mrs.vo.movie.MovieCardVo">
         <id property="id" column="id" jdbcType="BIGINT"/>
@@ -78,11 +83,11 @@
     <select id="selectMostWatchedMovies" resultMap="MovieCardVoResultMap" resultType="cn.zjw.mrs.vo.movie.MovieCardVo">
         SELECT id, name, score, pic, num FROM movie
         ORDER BY num DESC
-        LIMIT 0, 10
+        LIMIT 0, ${num}
     </select>
     <select id="selectHighestRatedMovies" resultType="cn.zjw.mrs.vo.movie.MovieCardVo">
         SELECT id, name, score, pic, num FROM movie
         ORDER BY score DESC
-        LIMIT 0, 10
+        LIMIT 0, ${num}
     </select>
 </mapper>

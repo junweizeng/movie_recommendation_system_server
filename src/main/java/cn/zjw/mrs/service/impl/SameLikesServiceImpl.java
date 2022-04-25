@@ -7,7 +7,7 @@ import cn.zjw.mrs.mapper.SameLikesMapper;
 import org.springframework.stereotype.Service;
 
 /**
-* @author 95758
+* @author zjw
 * @description 针对表【same_likes】的数据库操作Service实现
 * @createDate 2022-04-23 17:44:19
 */

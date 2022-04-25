@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zjw
@@ -32,5 +33,17 @@ public class RecommendationController {
         List<RecommendedMovieVo> recommendedMovies = recommendationService.getRecommendedMoviesByUserId(uid);
 
         return Result.success(recommendedMovies);
+    }
+
+    /**
+     * 获取看过的电影和推荐电影之间的联系，用于绘制Echarts关系图
+     * @return 看过的电影和推荐电影之间的联系
+     */
+    @GetMapping("/relations")
+    public Result<?> getLinksBetweenWatchedMoviesAndRecommendedMovies(Authentication authentication) {
+        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+        Long uid = loginUser.getUser().getId();
+        Map<String, List<?>> res = recommendationService.getLinksBetweenWatchedMoviesAndRecommendedMovies(uid);
+        return Result.success(res);
     }
 }

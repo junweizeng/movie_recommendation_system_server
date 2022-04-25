@@ -2,9 +2,7 @@ package cn.zjw.mrs.controller;
 
 import cn.zjw.mrs.entity.LoginUser;
 import cn.zjw.mrs.entity.Result;
-import cn.zjw.mrs.service.RegionLikeService;
-import cn.zjw.mrs.service.TypeLikeService;
-import cn.zjw.mrs.service.UserService;
+import cn.zjw.mrs.service.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +28,9 @@ public class UserLikeController {
     @Resource
     private UserService userService;
 
+    @Resource
+    private RecommendationService recommendationService;
+
     @GetMapping
     public Result<?> getTypesAndRegions(Authentication authentication) {
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
@@ -41,10 +42,8 @@ public class UserLikeController {
     public Result<?> updateUserTypeLike(@RequestBody int[] types, Authentication authentication) {
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         Long id = loginUser.getUser().getId();
-        int update = typeLikeService.updateUserTypeLike(id, types);
-        if (update == 0) {
-            return Result.success("电影类型喜好更新失败(┬┬﹏┬┬)");
-        }
+        typeLikeService.updateUserTypeLike(id, types);
+        recommendationService.updateRecommendation(id);
         return Result.success("电影类型喜好更新成功(‾◡◝)");
     }
 
@@ -52,10 +51,8 @@ public class UserLikeController {
     public Result<?> updateUserRegionLike(@RequestBody int[] regions, Authentication authentication) {
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         Long id = loginUser.getUser().getId();
-        int update = regionLikeService.updateUserRegionLike(id, regions);
-        if (update == 0) {
-            return Result.success("电影地区喜好更新失败(┬┬﹏┬┬)");
-        }
+        regionLikeService.updateUserRegionLike(id, regions);
+        recommendationService.updateRecommendation(id);
         return Result.success("电影地区喜好更新成功(‾◡◝)");
     }
 }

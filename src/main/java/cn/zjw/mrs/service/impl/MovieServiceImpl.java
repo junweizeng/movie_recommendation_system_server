@@ -83,7 +83,7 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie>
 
     @Override
     public List<MovieCardVo> getMostWatchedMovies() {
-        List<MovieCardVo> movies = movieMapper.selectMostWatchedMovies();
+        List<MovieCardVo> movies = movieMapper.selectMostWatchedMovies(10);
         for (MovieCardVo movie: movies) {
             movie.setPic(PicUrlUtil.getFullMoviePicUrl(movie.getPic()));
         }
@@ -92,7 +92,7 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie>
 
     @Override
     public List<MovieCardVo> getHighestRatedMovies() {
-        List<MovieCardVo> movies = movieMapper.selectHighestRatedMovies();
+        List<MovieCardVo> movies = movieMapper.selectHighestRatedMovies(10);
         for (MovieCardVo movie: movies) {
             movie.setPic(PicUrlUtil.getFullMoviePicUrl(movie.getPic()));
         }

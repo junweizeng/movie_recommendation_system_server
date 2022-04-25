@@ -17,6 +17,8 @@ public class NodeVo {
     private Long id;
     private Long mid;
     private String name;
-    private Integer value;
+    private String value;
     private Integer category;
+    private String types;
+    private String regions;
 }

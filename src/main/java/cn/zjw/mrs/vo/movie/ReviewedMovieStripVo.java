@@ -22,7 +22,7 @@ public class ReviewedMovieStripVo {
     /**
      * 电影评分
      */
-    private String score;
+    private double score;
 
     /**
      * 用户评分

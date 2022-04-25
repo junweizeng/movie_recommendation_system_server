@@ -12,4 +12,25 @@
     <sql id="Base_Column_List">
         mid,matrix
     </sql>
+    <select id="selectAllMovieFeaturesWhereUserNotWatchedAndScoreMoreThanFive"
+            resultType="cn.zjw.mrs.entity.MovieFeature">
+        SELECT f.* FROM movie_feature f
+        JOIN movie m ON m.id = f.mid
+        WHERE m.score >= 5
+        AND m.id NOT IN (SELECT c.mid FROM `comment` c WHERE c.uid = ${uid})
+    </select>
+
+    <select id="selectRecommendedMoviesFeaturesByUserId" resultType="cn.zjw.mrs.entity.MovieFeature">
+        SELECT r.mid, mf.matrix FROM movie_feature mf
+        JOIN recommendation r ON mf.mid = r.mid
+        WHERE r.uid = ${uid};
+    </select>
+
+    <select id="selectWatchedMoviesFeaturesByUserId" resultType="cn.zjw.mrs.entity.MovieFeature">
+        SELECT c.mid, mf.matrix FROM movie_feature mf
+        JOIN comment c ON mf.mid = c.mid
+        WHERE c.uid = ${uid}
+          AND c.mid IN (SELECT mid FROM (SELECT mid FROM `comment` WHERE uid = ${uid} LIMIT ${num}) cc)
+    </select>
+
 </mapper>
