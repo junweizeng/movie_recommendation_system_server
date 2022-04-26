@@ -49,6 +49,17 @@ public class UserController {
         return userService.register(user);
     }
 
+    @PostMapping("/update/password")
+    public Result<?> updatePassword(@RequestBody Map<String, String> password, Principal principal) {
+        int update = userService.updatePassword(principal.getName(), password);
+        if (update == -1) {
+            return Result.error("输入的原密码不正确(┬┬﹏┬┬)");
+        } else if (update == 0) {
+            return Result.error("密码修改失败(┬┬﹏┬┬)");
+        }
+        return Result.success("密码修改成功(‾◡◝)");
+    }
+
     @PostMapping("/judge")
     public Result<?> isLogin() {
         return Result.success();
