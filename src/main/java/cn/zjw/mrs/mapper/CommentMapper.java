@@ -1,6 +1,7 @@
 package cn.zjw.mrs.mapper;
 
 import cn.zjw.mrs.entity.Comment;
+import cn.zjw.mrs.entity.Preference;
 import cn.zjw.mrs.vo.comment.CommentMovieVo;
 import cn.zjw.mrs.vo.comment.CommentStripVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -27,9 +28,11 @@ public interface CommentMapper extends BaseMapper<Comment> {
     /**
      * 获取某部电影下的所有评价信息
      * @param mid 电影id
+     * @param currentPage 当前页数
+     * @param pageSize 每页评论数
      * @return 所有评价信息
      */
-    List<CommentStripVo> selectCommentsByMovieId(Long mid);
+    List<CommentStripVo> selectMoreCommentsByMovieId(Long mid, int currentPage, int pageSize);
 
     /**
      * 获取某个用户的所有评价动态
@@ -37,6 +40,12 @@ public interface CommentMapper extends BaseMapper<Comment> {
      * @return 所有评价动态
      */
     List<CommentMovieVo> selectOwnCommentMovieMoments(Long uid);
+
+    /**
+     * 获取用户所有的偏好
+     * @return
+     */
+    List<Preference> selectAllPreferences();
 }
 
 

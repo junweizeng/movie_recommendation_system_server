@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -62,8 +63,10 @@ public class CommentController {
     }
 
     @GetMapping("/all")
-    private Result<?> getCommentsByMovieId(@RequestParam Long mid) {
-        List<CommentStripVo> comments = commentService.getCommentsByMovieId(mid);
+    private Result<?> getMoreCommentsByMovieId(@RequestParam Long mid,
+                                               @RequestParam(defaultValue = "0") int currentPage,
+                                               @RequestParam(defaultValue = "10") int pageSize) {
+        List<CommentStripVo> comments = commentService.getMoreCommentsByMovieId(mid, currentPage, pageSize);
         if (Objects.isNull(comments)) {
             return Result.error("该电影下暂无评论");
         }
@@ -79,5 +82,16 @@ public class CommentController {
             return Result.error("暂无评价动态");
         }
         return Result.success(moments);
+    }
+
+    @DeleteMapping("/remove")
+    private Result<?> removeOwnComment(@RequestBody Comment comment, Authentication authentication) {
+        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+        Long uid = loginUser.getUser().getId();
+        int delete = commentService.removeOwnComment(uid, comment.getMid());
+        if (delete == 0) {
+            return Result.error("短评删除失败(┬┬﹏┬┬)");
+        }
+        return Result.success("短评删除成功(‾◡◝)");
     }
 }

@@ -92,8 +92,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
     }
 
     @Override
-    public List<CommentStripVo> getCommentsByMovieId(Long mid) {
-        List<CommentStripVo> commentStripVos = commentMapper.selectCommentsByMovieId(mid);
+    public List<CommentStripVo> getMoreCommentsByMovieId(Long mid, int currentPage, int pageSize) {
+        currentPage = currentPage * pageSize;
+        List<CommentStripVo> commentStripVos = commentMapper.selectMoreCommentsByMovieId(mid, currentPage, pageSize);
         for (CommentStripVo comment: commentStripVos) {
             comment.setAvatar(PicUrlUtil.getFullAvatarUrl(comment.getAvatar()));
         }
@@ -111,6 +112,12 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
             commentMovieVo.getMovieStripVo().setPic(PicUrlUtil.getFullMoviePicUrl(pic));
         }
         return commentMovieVos;
+    }
+
+    @Override
+    public int removeOwnComment(Long uid, Long mid) {
+        return commentMapper.delete(
+                new LambdaQueryWrapper<Comment>().eq(Comment::getUid, uid).eq(Comment::getMid, mid));
     }
 }
 

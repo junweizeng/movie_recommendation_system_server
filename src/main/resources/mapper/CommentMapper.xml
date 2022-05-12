@@ -27,11 +27,12 @@
         WHERE uid = ${uid} AND mid = ${mid}
     </select>
 
-    <select id="selectCommentsByMovieId" resultType="cn.zjw.mrs.vo.comment.CommentStripVo">
+    <select id="selectMoreCommentsByMovieId" resultType="cn.zjw.mrs.vo.comment.CommentStripVo">
         SELECT c.score, c.comment, c.time, c.nickname, c.agree, u.avatar FROM `comment` c
         JOIN `user` u ON c.uid = u.id
         WHERE mid = ${mid}
         ORDER BY c.time DESC
+        LIMIT ${currentPage}, ${pageSize}
     </select>
 
     <resultMap id="CommentMovieResultMap" type="cn.zjw.mrs.vo.comment.CommentMovieVo">
@@ -64,5 +65,15 @@
         ORDER BY c.time DESC
     </select>
 
-
+    <resultMap id="preferenceResultMap" type="cn.zjw.mrs.entity.Preference">
+        <id property="uid" column="uid" jdbcType="BIGINT"/>
+        <result property="mid" column="mid" jdbcType="BIGINT"/>
+        <result property="score" column="score" jdbcType="INTEGER"/>
+        <result property="cnt" column="cnt" jdbcType="INTEGER"/>
+    </resultMap>
+    <select id="selectAllPreferences" resultMap="preferenceResultMap" resultType="cn.zjw.mrs.entity.Preference">
+        SELECT c.uid, c.mid, c.score, cc.cnt FROM `comment` c
+        JOIN (SELECT uid, COUNT(uid) cnt FROM `comment` GROUP BY uid) cc ON c.uid = cc.uid
+        ORDER BY c.uid
+    </select>
 </mapper>

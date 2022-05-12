@@ -1,7 +1,6 @@
 package cn.zjw.mrs.service;
 
 import cn.zjw.mrs.entity.Comment;
-import cn.zjw.mrs.entity.Result;
 import cn.zjw.mrs.vo.comment.CommentMovieVo;
 import cn.zjw.mrs.vo.comment.CommentStripVo;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -39,9 +38,11 @@ public interface CommentService extends IService<Comment> {
     /**
      * 获取某部电影下的若干评价信息
      * @param mid 电影id
+     * @param currentPage 当前页数
+     * @param pageSize 每页评论数
      * @return 若干电影评价信息
      */
-    List<CommentStripVo> getCommentsByMovieId(Long mid);
+    List<CommentStripVo> getMoreCommentsByMovieId(Long mid, int currentPage, int pageSize);
 
     /**
      * 获取指定用户的电影评价动态
@@ -49,4 +50,12 @@ public interface CommentService extends IService<Comment> {
      * @return 电影评价动态条目
      */
     List<CommentMovieVo> getOwnCommentMovieMoments(Long uid);
+
+    /**
+     * 删除用户对某部电影的评论
+     * @param uid 用户id
+     * @param mid 电影id
+     * @return 删除结果
+     */
+    int removeOwnComment(Long uid, Long mid);
 }
