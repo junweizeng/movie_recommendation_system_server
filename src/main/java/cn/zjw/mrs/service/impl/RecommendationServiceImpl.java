@@ -1,7 +1,9 @@
 package cn.zjw.mrs.service.impl;
 
+import cn.hutool.core.lang.Pair;
 import cn.zjw.mrs.entity.*;
 import cn.zjw.mrs.mapper.*;
+import cn.zjw.mrs.service.RecommendationService;
 import cn.zjw.mrs.utils.PicUrlUtil;
 import cn.zjw.mrs.vo.movie.RecommendedMovieVo;
 import cn.zjw.mrs.vo.movie.ReviewedMovieStripVo;
@@ -10,13 +12,26 @@ import cn.zjw.mrs.vo.movie.relation.LinkVo;
 import cn.zjw.mrs.vo.movie.relation.NodeVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import cn.zjw.mrs.service.RecommendationService;
-import javafx.util.Pair;
+import org.apache.mahout.cf.taste.common.TasteException;
+import org.apache.mahout.cf.taste.impl.common.FastByIDMap;
+import org.apache.mahout.cf.taste.impl.model.GenericDataModel;
+import org.apache.mahout.cf.taste.impl.model.GenericUserPreferenceArray;
+import org.apache.mahout.cf.taste.impl.neighborhood.NearestNUserNeighborhood;
+import org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender;
+import org.apache.mahout.cf.taste.impl.similarity.PearsonCorrelationSimilarity;
+import org.apache.mahout.cf.taste.model.DataModel;
+import org.apache.mahout.cf.taste.model.PreferenceArray;
+import org.apache.mahout.cf.taste.neighborhood.UserNeighborhood;
+import org.apache.mahout.cf.taste.recommender.RecommendedItem;
+import org.apache.mahout.cf.taste.recommender.Recommender;
+import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -29,11 +44,56 @@ import java.util.*;
 * @description 针对表【user_recommendation】的数据库操作Service实现
 * @createDate 2022-04-24 00:04:20
 */
+@Component
 @Service
 public class RecommendationServiceImpl extends ServiceImpl<RecommendationMapper, Recommendation>
     implements RecommendationService{
 
     private static final Logger logger = LoggerFactory.getLogger(RecommendationServiceImpl.class);
+
+    /**
+     * 基于用户的协同过滤的电影推荐器
+     */
+    private static Recommender userCfRecommender;
+
+    /**
+     * 基于用户的协同过滤推荐，重新计算获取推荐器
+     * 定时每20分钟执行一次，后续根据数据量的变化，执行频率可做调整
+     */
+    @Scheduled(fixedRate = 1000 * 60 * 20)
+    public void updateUserBasedCollaborativeFilteringRecommendationRecommender() {
+        logger.info("开始：基于用户的协同过滤推荐，重新计算获取推荐器");
+
+        try {
+            // 准备数据
+            FastByIDMap<PreferenceArray> preferences = new FastByIDMap<>();
+            List<Preference> myPreferences = commentMapper.selectAllPreferences();
+            long idx = 0;
+            for (int i = 0; i < myPreferences.size(); i ++ ) {
+                int cnt = myPreferences.get(i).getCnt();
+                PreferenceArray preferenceArray = new GenericUserPreferenceArray(cnt);
+                preferenceArray.setUserID(0, myPreferences.get(i).getUid());
+                for (int j = 0; j < cnt; j ++ ) {
+                    preferenceArray.setItemID(j, myPreferences.get(i + j).getMid());
+                    preferenceArray.setValue(j, myPreferences.get(i + j).getScore());
+                }
+                preferences.put(idx ++, preferenceArray);
+                i += cnt - 1;
+            }
+            DataModel model = new GenericDataModel(preferences);
+
+            // 计算用户间的皮尔逊系数
+            UserSimilarity similarity = new PearsonCorrelationSimilarity(model);
+            // 对每个用户取固定数量30个最近邻居
+            UserNeighborhood neighborhood = new NearestNUserNeighborhood(30, similarity, model);
+            // 基于用户协同过滤推荐的推荐器
+            userCfRecommender = new GenericUserBasedRecommender(model, neighborhood, similarity);
+        } catch (TasteException e) {
+            e.printStackTrace();
+        }
+
+        logger.info("结束：基于用户的协同过滤推荐，重新计算获取推荐器");
+    }
 
     /**
      * 表示类型 或 地区 的数量都为21
@@ -70,9 +130,10 @@ public class RecommendationServiceImpl extends ServiceImpl<RecommendationMapper,
     @Resource
     private CommentMapper commentMapper;
 
+
     @Override
     public List<RecommendedMovieVo> getRecommendedMoviesByUserId(Long uid) {
-        List<RecommendedMovieVo> recommendedMovies = recommendationMapper.selectRecommendedMoviesByUserId(uid, 15);
+        List<RecommendedMovieVo> recommendedMovies = recommendationMapper.selectRecommendedMoviesByUserId(uid, 30);
         for (RecommendedMovieVo movie: recommendedMovies) {
             movie.setPic(PicUrlUtil.getFullMoviePicUrl(movie.getPic()));
         }
@@ -160,7 +221,6 @@ public class RecommendationServiceImpl extends ServiceImpl<RecommendationMapper,
         return res;
     }
 
-
     @Override
     @Async("asyncServiceExecutor")
     public void updateRecommendation(Long uid) {
@@ -168,36 +228,40 @@ public class RecommendationServiceImpl extends ServiceImpl<RecommendationMapper,
 
         Timestamp t1 = Timestamp.valueOf(LocalDateTime.now());
 
-        double[] userPreferenceMatrix = computeUserPreferenceMatrix(uid);
-        System.out.println("userPreferenceMatrix:" + Arrays.toString(userPreferenceMatrix));
-
-        List<Pair<Long, Double>> movieRecommendations = new ArrayList<>();
-        List<MovieFeature> movieFeatures =
-                movieFeatureMapper.selectAllMovieFeaturesWhereUserNotWatchedAndScoreMoreThanFive(uid);
-        for (MovieFeature movieFeature : movieFeatures) {
-            double[] movieFeatureMatrix = formatMovieFeatureMatrix(movieFeature.getMatrix());
-            double dist = calculateTheUsersPreferenceForMovies(userPreferenceMatrix, movieFeatureMatrix);
-            if (dist > 0) {
-                movieRecommendations.add(new Pair<>(movieFeature.getMid(), dist));
-            }
-        }
-        movieRecommendations.sort(new Comparator<Pair<Long, Double>>() {
-            @Override
-            public int compare(Pair<Long, Double> o1, Pair<Long, Double> o2) {
-                return o2.getValue().compareTo(o1.getValue());
-            }
-        });
-
-        int len = Math.min(movieRecommendations.size(), 30);
         // 删除该用户之前的推荐结果
         recommendationMapper.delete(new LambdaQueryWrapper<Recommendation>().eq(Recommendation::getUid, uid));
+
+        // 基于内容推荐
+        List<Pair<Long, Double>> contentBasedResult = getContentBasedMovieRecommendationResult(uid, 30);
         System.out.println("\n排序结果：");
-        for (int i = 0; i < len; i ++ ) {
-            System.out.println(movieRecommendations.get(i).getKey() + "   " + movieRecommendations.get(i).getValue());
+        for (int i = 0; i < contentBasedResult.size(); i ++ ) {
+            System.out.println(contentBasedResult.get(i).getKey() + "   " + contentBasedResult.get(i).getValue());
             // 重新插入系统新推荐的电影
             recommendationMapper.insert(new Recommendation(uid,
-                    movieRecommendations.get(i).getKey(),
-                    movieRecommendations.get(i).getValue()));
+                    contentBasedResult.get(i).getKey(),
+                    contentBasedResult.get(i).getValue()));
+        }
+
+        // 协同过滤推荐
+        try {
+            List<RecommendedItem> recommendedMovies = userCfRecommender.recommend(uid, 30);
+            int cnt = 0;
+            for (int i = 0; i < recommendedMovies.size(); i ++ ) {
+                // 判断电影是否已经看过，如果没有则插入推荐表中（去重）
+                if (commentMapper.selectOne(
+                        new LambdaQueryWrapper<Comment>()
+                                .eq(Comment::getMid, recommendedMovies.get(i).getItemID())) == null) {
+                    recommendationMapper.insert(new Recommendation(uid,
+                            recommendedMovies.get(i).getItemID(),
+                            recommendedMovies.get(i).getValue() / 10.0));
+                    cnt ++;
+                }
+                if (cnt >= 15) {
+                    break;
+                }
+            }
+        } catch (TasteException e) {
+            e.printStackTrace();
         }
 
         Timestamp t2 = Timestamp.valueOf(LocalDateTime.now());
@@ -205,6 +269,41 @@ public class RecommendationServiceImpl extends ServiceImpl<RecommendationMapper,
         logger.info("end time:" + t2);
 
         logger.info("end executeAsync");
+    }
+
+    /**
+     * 基于内容电影推荐
+     * @param uid 用户id
+     * @param size 推荐电影数目
+     * @return 推荐电影结果
+     */
+    public List<Pair<Long, Double>> getContentBasedMovieRecommendationResult(long uid, int size) {
+        // 计算用户的偏好矩阵
+        double[] userPreferenceMatrix = computeUserPreferenceMatrix(uid);
+        System.out.println("userPreferenceMatrix:" + Arrays.toString(userPreferenceMatrix));
+
+        List<Pair<Long, Double>> movieRecommendations = new ArrayList<>();
+        // 所有电影特征信息矩阵都提前预处理过并存入数据库中，这里查询未被用户评价过且评分高于5分的电影特征矩阵列表
+        List<MovieFeature> movieFeatures =
+                movieFeatureMapper.selectAllMovieFeaturesWhereUserNotWatchedAndScoreMoreThanFive(uid);
+        for (MovieFeature movieFeature : movieFeatures) {
+            double[] movieFeatureMatrix = formatMovieFeatureMatrix(movieFeature.getMatrix());
+            // 计算 用户的偏好矩阵 与 电影的特征信息矩阵 的相似度（运用余弦相似度计算公式）
+            double dist = calculateTheUsersPreferenceForMovies(userPreferenceMatrix, movieFeatureMatrix);
+            // 若相似度大于0，则加入结果集
+            if (dist > 0) {
+                movieRecommendations.add(new Pair<>(movieFeature.getMid(), dist));
+            }
+        }
+        // 经过排序，将相似度高的电影排在前面
+        movieRecommendations.sort((o1, o2) -> o2.getValue().compareTo(o1.getValue()));
+        // 取结果集中相似度最高的size部电影，如果结果集没有size部，则取结果集中所有电影
+        int len = Math.min(movieRecommendations.size(), size);
+        List<Pair<Long, Double>> res = new ArrayList<>();
+        for (int i = 0; i < len; i ++ ) {
+            res.add(movieRecommendations.get(i));
+        }
+        return res;
     }
 
     /**
@@ -223,7 +322,7 @@ public class RecommendationServiceImpl extends ServiceImpl<RecommendationMapper,
 
     /**
      * 计算用户对电影的喜好程度
-     * 即计算 用户的偏好矩阵 与 电影的特征矩阵 之间的距离（运用余弦相似度公式）
+     * 即计算 用户的偏好矩阵 与 电影的特征矩阵 的相似度（运用余弦相似度公式）
      * @param userPreferenceMatrix 用户偏好矩阵
      * @param movieFeatureMatrix 电影特征矩阵
      * @return 用户对电影的喜好程度
@@ -291,6 +390,10 @@ public class RecommendationServiceImpl extends ServiceImpl<RecommendationMapper,
             }
         }
         avg = (avg + USER_LIKE_WEIGHT * 10) / (comments.size() + USER_LIKE_WEIGHT);
+        if (commentsLen == 0) {
+            avg = 5;
+        }
+        avg = 5;
 
         // 用户自己选择的类型或地区喜好标签，每个标签都以10分影响程度加入用户偏好矩阵
         // 为了提高用户自选标签的推荐价值，这里加入特征矩阵的次数为USER_LIKE_WEIGHT次

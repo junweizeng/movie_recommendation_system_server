@@ -1,10 +1,12 @@
 package cn.zjw.mrs;
 
 import cn.zjw.mrs.service.RecommendationService;
+import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author zjw
@@ -19,6 +21,13 @@ public class RecommendTest {
 
     @Test
     public void testUpdateRecommendation() {
-        service.updateRecommendation(19L);
+        service.updateRecommendation(10L);
+    }
+
+    @Test
+    public void testUserBasedRecommender() {
+//        List<RecommendedItem> recommendedItems = service.getUserBasedMovieRecommendationResult(10, 100);
+//        recommendedItems.forEach(System.out::println);
+        System.out.println("test testUserBasedRecommender------------");
     }
 }
