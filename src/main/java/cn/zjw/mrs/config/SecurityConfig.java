@@ -1,7 +1,6 @@
 package cn.zjw.mrs.config;
 
 import cn.zjw.mrs.filter.JwtAuthenticationTokenFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,13 +36,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    @Autowired
+    @Resource
     private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
 
-    @Autowired
+    @Resource
     private AuthenticationEntryPoint authenticationEntryPoint;
 
-    @Autowired
+    @Resource
     private AccessDeniedHandler accessDeniedHandler;
 
     @Override
@@ -56,7 +55,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 // 不需要登录可以直接访问
-                .antMatchers("/movie", "/movie/info", "/movie/recommend", "/user/register", "/movie/match/name", "/movie/most/watched", "/movie/highest/score").permitAll()
+                .antMatchers("/movie",
+                        "/movie/info",
+                        "/movie/recommend",
+                        "/user/register",
+                        "/movie/match/name",
+                        "/movie/most/watched",
+                        "/movie/highest/score",
+                        "/user/check/username",
+                        "/check/auth/code",
+                        "/check/username/exists",
+                        "/mail/auth/code/under/logout",
+                        "/find/password").permitAll()
                 // 对于登录接口 允许匿名访问
                 .antMatchers("/user/login").anonymous()
                 // 除上面外的所有请求全部需要鉴权认证

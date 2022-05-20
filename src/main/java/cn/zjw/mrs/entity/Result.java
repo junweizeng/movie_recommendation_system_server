@@ -59,4 +59,8 @@ public class Result<T> {
     public static <T> Result<T> error(String msg, T data) {
         return new Result<>(500, msg, data);
     }
+
+    public static <T> Result<T> error(int code, String msg) {
+        return new Result<>(code, msg);
+    }
 }
