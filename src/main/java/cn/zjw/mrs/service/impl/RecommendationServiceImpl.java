@@ -147,8 +147,8 @@ public class RecommendationServiceImpl extends ServiceImpl<RecommendationMapper,
         categories.add(new CategoryVo("看过的电影"));
         categories.add(new CategoryVo("推荐的电影"));
 
-        List<MovieFeature> watchedMoviesFeatures = movieFeatureMapper.selectWatchedMoviesFeaturesByUserId(uid, 30);
-        List<MovieFeature> recommendedMoviesFeatures = movieFeatureMapper.selectRecommendedMoviesFeaturesByUserId(uid);
+        List<MovieFeature> watchedMoviesFeatures = movieFeatureMapper.selectWatchedMoviesFeaturesByUserId(uid, 20);
+        List<MovieFeature> recommendedMoviesFeatures = movieFeatureMapper.selectRecommendedMoviesFeaturesByUserId(uid, 20);
         List<MovieFeature> totalMoviesFeatures = new ArrayList<>();
         totalMoviesFeatures.addAll(watchedMoviesFeatures);
         totalMoviesFeatures.addAll(recommendedMoviesFeatures);

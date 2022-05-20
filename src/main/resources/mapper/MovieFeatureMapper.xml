@@ -23,7 +23,8 @@
     <select id="selectRecommendedMoviesFeaturesByUserId" resultType="cn.zjw.mrs.entity.MovieFeature">
         SELECT r.mid, mf.matrix FROM movie_feature mf
         JOIN recommendation r ON mf.mid = r.mid
-        WHERE r.uid = ${uid};
+        WHERE r.uid = ${uid}
+        LIMIT ${num}
     </select>
 
     <select id="selectWatchedMoviesFeaturesByUserId" resultType="cn.zjw.mrs.entity.MovieFeature">

@@ -23,9 +23,10 @@ public interface MovieFeatureMapper extends BaseMapper<MovieFeature> {
     /**
      * 获取用户id为uid的用户，其推荐电影列表中每部电影的特征矩阵
      * @param uid 用户id
+     * @param num 取多少部电影
      * @return 推荐电影列表中每部电影的特征矩阵
      */
-    List<MovieFeature> selectRecommendedMoviesFeaturesByUserId(Long uid);
+    List<MovieFeature> selectRecommendedMoviesFeaturesByUserId(Long uid, Integer num);
 
     /**
      * 获取用户id为uid的用户，其看过的电影列表（最近看过的前num部电影）中每部电影的特征矩阵
