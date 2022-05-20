@@ -1,5 +1,5 @@
 package cn.zjw.mrs;
-import cn.zjw.mrs.service.MailService;
+import cn.zjw.mrs.service.AuthService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -15,12 +15,10 @@ import javax.annotation.Resource;
 public class MailTest {
 
     @Resource
-    private MailService mailService;
+    private AuthService authService;
 
     @Test
     public void sendMailTest() {
-        mailService.sendSimpleMail("957589005@qq.com",
-                "电影推荐系统",
-                "【电影推荐系统】验证码：666666，用于验证你的邮箱，如非本人操作，请忽略。");
+        authService.sendMailAuthCode("123", "957589005@qq.com");
     }
 }
