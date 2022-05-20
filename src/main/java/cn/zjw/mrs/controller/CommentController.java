@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -92,5 +93,11 @@ public class CommentController {
             return Result.error("短评删除失败(┬┬﹏┬┬)");
         }
         return Result.success("短评删除成功(‾◡◝)");
+    }
+
+    @GetMapping("/word/cloud/data")
+    private Result<?> getCommentsWordCloudData(@RequestParam long mid) {
+        List<Map<String, String>> res = commentService.getCommentsWordCloudData(mid);
+        return Result.success(res);
     }
 }

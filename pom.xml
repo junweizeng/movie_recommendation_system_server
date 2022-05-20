@@ -120,6 +120,13 @@
 			<version>8.0.28</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/com.huaban/jieba-analysis -->
+		<dependency>
+			<groupId>com.huaban</groupId>
+			<artifactId>jieba-analysis</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

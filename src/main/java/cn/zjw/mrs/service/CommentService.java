@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author zjw
@@ -58,4 +59,11 @@ public interface CommentService extends IService<Comment> {
      * @return 删除结果
      */
     int removeOwnComment(Long uid, Long mid);
+
+    /**
+     * 获取电影id为mid的电影下，评论词云图绘制所需的数据
+     * @param mid 电影id
+     * @return 词云图绘制所需数据
+     */
+    List<Map<String, String>> getCommentsWordCloudData(long mid);
 }

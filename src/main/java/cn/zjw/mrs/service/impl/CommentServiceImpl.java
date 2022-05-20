@@ -1,29 +1,23 @@
 package cn.zjw.mrs.service.impl;
 
-import cn.zjw.mrs.entity.LoginUser;
-import cn.zjw.mrs.entity.Result;
+import cn.zjw.mrs.entity.Comment;
 import cn.zjw.mrs.entity.User;
+import cn.zjw.mrs.mapper.CommentMapper;
 import cn.zjw.mrs.mapper.UserMapper;
+import cn.zjw.mrs.service.CommentService;
+import cn.zjw.mrs.utils.FileUtil;
 import cn.zjw.mrs.utils.PicUrlUtil;
 import cn.zjw.mrs.vo.comment.CommentMovieVo;
 import cn.zjw.mrs.vo.comment.CommentStripVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import cn.zjw.mrs.entity.Comment;
-import cn.zjw.mrs.service.CommentService;
-import cn.zjw.mrs.mapper.CommentMapper;
-import org.apache.logging.log4j.util.Strings;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import com.huaban.analysis.jieba.JiebaSegmenter;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
 * @author zjw
@@ -118,6 +112,47 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
     public int removeOwnComment(Long uid, Long mid) {
         return commentMapper.delete(
                 new LambdaQueryWrapper<Comment>().eq(Comment::getUid, uid).eq(Comment::getMid, mid));
+    }
+
+    @Override
+    public List<Map<String, String>> getCommentsWordCloudData(long mid) {
+        List<String> stopWords = FileUtil.readStopWords();
+
+        List<Map<String, String>> res = new ArrayList<>();
+        List<CommentStripVo> comments = commentMapper.selectMoreCommentsByMovieId(mid, 0, 100);
+        JiebaSegmenter jiebaSegmenter = new JiebaSegmenter();
+
+        Map<String, Integer> counts = new HashMap<>(20);
+        for (CommentStripVo comment : comments) {
+            // 去掉两边的空格
+            String sentence = comment.getComment().trim();
+            // 将所有标点符号换成空格
+            sentence = sentence.replaceAll("\\p{P}", "");
+            sentence = sentence.replaceAll("\\s+", "");
+
+            // 结巴分词，得到分词结果（包含 词语、截取起始位置、截取终止位置）
+            List<String> words = jiebaSegmenter.sentenceProcess(sentence);
+            words.removeAll(stopWords);
+            System.out.println(words);
+            for (String word: words) {
+                // 词频统计，如果哈希表中已有word，则加1；否则word的value值置为1
+                if (counts.containsKey(word)) {
+                    counts.put(word, counts.get(word) + 1);
+                } else {
+                    counts.put(word, 1);
+                }
+            }
+        }
+
+        // 将词频数据封装成{"name":"词语", "value": "1"}形式，词云图数据所需形式
+        counts.forEach((word, count) -> {
+            Map<String, String> data = new HashMap<>(2);
+            data.put("name", word);
+            data.put("value", String.valueOf(count));
+            res.add(data);
+        });
+
+        return res;
     }
 }
 
