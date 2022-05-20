@@ -7,8 +7,7 @@ import java.io.IOException;
 /**
  * @author zjw
  */
-public class WebUtils
-{
+public class WebUtils {
     /**
      * 将字符串渲染到客户端
      * 
@@ -17,15 +16,13 @@ public class WebUtils
      * @return null
      */
     public static String renderString(HttpServletResponse response, String string) {
-        try
-        {
+        try {
             response.setStatus(200);
             response.setContentType("application/json");
             response.setCharacterEncoding("utf-8");
             response.getWriter().print(string);
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
             e.printStackTrace();
         }
         return null;
