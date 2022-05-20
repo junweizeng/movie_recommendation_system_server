@@ -7,6 +7,8 @@ import cn.zjw.mrs.service.OssService;
 import cn.zjw.mrs.service.UserService;
 import cn.zjw.mrs.utils.Base64DecodedMultipartFile;
 import cn.zjw.mrs.vo.user.UserInfoVo;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import javax.annotation.Resource;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author zjw
@@ -51,7 +54,10 @@ public class UserController {
 
     @PostMapping("/update/password")
     public Result<?> updatePassword(@RequestBody Map<String, String> password, Principal principal) {
-        int update = userService.updatePassword(principal.getName(), password);
+        int update = userService.updatePassword(principal.getName(),
+                password.get("prePassword"),
+                password.get("newPassword"),
+                false);
         if (update == -1) {
             return Result.error("输入的原密码不正确(┬┬﹏┬┬)");
         } else if (update == 0) {
@@ -100,5 +106,12 @@ public class UserController {
             return Result.error("头像上传失败(┬┬﹏┬┬)");
         }
         return Result.success("头像修改成功(‾◡◝)", null);
+    }
+
+    @GetMapping("/get/mail")
+    public Result<?> getUserMail(Principal principal) {
+        String username = principal.getName();
+        User user = userService.getOne(new LambdaUpdateWrapper<User>().eq(User::getUsername, username));
+        return Result.success("成功", user.getMail());
     }
 }

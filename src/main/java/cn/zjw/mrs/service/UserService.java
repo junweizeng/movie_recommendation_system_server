@@ -69,8 +69,10 @@ public interface UserService extends IService<User> {
     /**
      * 更新密码
      * @param username 用户名
-     * @param password 原密码 和 新密码
+     * @param prePassword 原密码
+     * @param newPassword 新密码
+     * @param isFindPassword 是否为找回密码，如果是找回密码则跳过原密码检测
      * @return 更新结果（-1表示用户输入的原密码不正确，0表示修改失败，1表示修改成功）
      */
-    int updatePassword(String username, Map<String, String> password);
+    int updatePassword(String username, String prePassword, String newPassword, boolean isFindPassword);
 }

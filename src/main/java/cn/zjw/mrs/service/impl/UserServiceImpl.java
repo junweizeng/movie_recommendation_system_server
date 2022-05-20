@@ -164,20 +164,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public int updatePassword(String username, Map<String, String> password) {
-        String prePassword = password.get("prePassword");
-
+    public int updatePassword(String username, String prePassword, String newPassword, boolean isFindPassword) {
         User user = userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, username));
         String userPassword = user.getPassword();
         // 将数据库中的密码 与 用户输入的密码 进行匹配
         boolean isMatches = passwordEncoder.matches(prePassword, userPassword);
         // 匹配失败返回-1
-        if (!isMatches) {
+        if (!isMatches && !isFindPassword) {
             return -1;
         }
 
         // 对新密码进行BCrypt加密后再存入数据库
-        String newPassword = passwordEncoder.encode(password.get("newPassword"));
+        newPassword = passwordEncoder.encode(newPassword);
         user.setPassword(newPassword);
         return userMapper.update(null,
                 new LambdaUpdateWrapper<User>().set(User::getPassword, newPassword).eq(User::getUsername, username));
