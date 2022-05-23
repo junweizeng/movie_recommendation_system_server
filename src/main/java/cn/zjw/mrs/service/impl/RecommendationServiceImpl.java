@@ -12,6 +12,7 @@ import cn.zjw.mrs.vo.movie.relation.LinkVo;
 import cn.zjw.mrs.vo.movie.relation.NodeVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.common.FastByIDMap;
 import org.apache.mahout.cf.taste.impl.model.GenericDataModel;
@@ -30,6 +31,7 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -46,10 +48,9 @@ import java.util.*;
 */
 @Component
 @Service
+@Slf4j
 public class RecommendationServiceImpl extends ServiceImpl<RecommendationMapper, Recommendation>
     implements RecommendationService{
-
-    private static final Logger logger = LoggerFactory.getLogger(RecommendationServiceImpl.class);
 
     /**
      * 基于用户的协同过滤的电影推荐器
@@ -60,9 +61,10 @@ public class RecommendationServiceImpl extends ServiceImpl<RecommendationMapper,
      * 基于用户的协同过滤推荐，重新计算获取推荐器
      * 定时每20分钟执行一次，后续根据数据量的变化，执行频率可做调整
      */
+    @Async("asyncServiceExecutor")
     @Scheduled(fixedRate = 1000 * 60 * 20)
     public void updateUserBasedCollaborativeFilteringRecommendationRecommender() {
-        logger.info("开始：基于用户的协同过滤推荐，重新计算获取推荐器");
+        log.info("开始：基于用户的协同过滤推荐，重新计算获取推荐器");
 
         try {
             // 准备数据
@@ -92,7 +94,7 @@ public class RecommendationServiceImpl extends ServiceImpl<RecommendationMapper,
             e.printStackTrace();
         }
 
-        logger.info("结束：基于用户的协同过滤推荐，重新计算获取推荐器");
+        log.info("结束：基于用户的协同过滤推荐，重新计算获取推荐器");
     }
 
     /**
@@ -224,7 +226,7 @@ public class RecommendationServiceImpl extends ServiceImpl<RecommendationMapper,
     @Override
     @Async("asyncServiceExecutor")
     public void updateRecommendation(Long uid) {
-        logger.info("start executeAsync");
+        log.info("start executeAsync");
 
         Timestamp t1 = Timestamp.valueOf(LocalDateTime.now());
 
@@ -265,10 +267,10 @@ public class RecommendationServiceImpl extends ServiceImpl<RecommendationMapper,
         }
 
         Timestamp t2 = Timestamp.valueOf(LocalDateTime.now());
-        logger.info("begin time:" + t1);
-        logger.info("end time:" + t2);
+        log.info("begin time:" + t1);
+        log.info("end time:" + t2);
 
-        logger.info("end executeAsync");
+        log.info("end executeAsync");
     }
 
     /**

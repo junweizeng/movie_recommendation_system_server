@@ -1,10 +1,6 @@
 package cn.zjw.mrs.utils;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.BoundSetOperations;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -191,13 +187,23 @@ public class RedisCache {
 
     /**
      * 删除Hash中的数据
-     * 
-     * @param key
-     * @param hkey
+     *
+     * @param key Redis键
+     * @param hKey Hash键
      */
-    public void delCacheMapValue(final String key, final String hkey) {
+    public void delCacheMapValue(final String key, final String hKey) {
         HashOperations hashOperations = redisTemplate.opsForHash();
-        hashOperations.delete(key, hkey);
+        hashOperations.delete(key, hKey);
+    }
+
+    /**
+     * Hash中的数据值增加num
+     * @param key Redis键
+     * @param hKey Hash键
+     * @param num 增量
+     */
+    public void increaseCacheMapValue(final String key, final String hKey, final int num) {
+        redisTemplate.opsForHash().increment(key, hKey, num );
     }
 
     /**
@@ -209,6 +215,15 @@ public class RedisCache {
      */
     public <T> List<T> getMultiCacheMapValue(final String key, final Collection<Object> hKeys) {
         return redisTemplate.opsForHash().multiGet(key, hKeys);
+    }
+
+    /**
+     * 获取Redis键为key的所有Hash数据，返回遍历游标Cursor
+     * @param key Redis键
+     * @return 遍历游标
+     */
+    public Cursor<Map.Entry<Object, Object>> getAllCacheMapValueCursor(final String key) {
+       return redisTemplate.opsForHash().scan(key, ScanOptions.NONE);
     }
 
     /**

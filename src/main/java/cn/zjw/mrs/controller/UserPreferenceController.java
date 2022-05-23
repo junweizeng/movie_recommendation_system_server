@@ -12,13 +12,13 @@ import java.util.Map;
 
 /**
  * @author zjw
- * @Classname UserLikeController
+ * @Classname UserPreferenceController
  * @Date 2022/4/20 16:14
  * @Description
  */
 @RestController
 @RequestMapping("/user/like")
-public class UserLikeController {
+public class UserPreferenceController {
     @Resource
     private RegionLikeService regionLikeService;
 

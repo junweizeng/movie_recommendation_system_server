@@ -28,7 +28,7 @@
     </select>
 
     <select id="selectMoreCommentsByMovieId" resultType="cn.zjw.mrs.vo.comment.CommentStripVo">
-        SELECT c.score, c.comment, c.time, c.nickname, c.agree, u.avatar FROM `comment` c
+        SELECT c.id, c.score, c.comment, c.time, c.nickname, c.agree, u.avatar FROM `comment` c
         JOIN `user` u ON c.uid = u.id
         WHERE mid = ${mid}
         ORDER BY c.time DESC
@@ -37,6 +37,7 @@
 
     <resultMap id="CommentMovieResultMap" type="cn.zjw.mrs.vo.comment.CommentMovieVo">
         <association property="commentStripVo" javaType="cn.zjw.mrs.vo.comment.CommentStripVo">
+            <result property="id" column="id" jdbcType="BIGINT"/>
             <result property="comment" column="comment" jdbcType="VARCHAR"/>
             <result property="score" column="score" jdbcType="INTEGER"/>
             <result property="time" column="time" jdbcType="TIMESTAMP"/>

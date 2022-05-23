@@ -5,6 +5,8 @@ import cn.zjw.mrs.entity.User;
 import cn.zjw.mrs.mapper.CommentMapper;
 import cn.zjw.mrs.mapper.UserMapper;
 import cn.zjw.mrs.service.CommentService;
+import cn.zjw.mrs.service.UserLikeRedisService;
+import cn.zjw.mrs.service.UserLikeService;
 import cn.zjw.mrs.utils.FileUtil;
 import cn.zjw.mrs.utils.PicUrlUtil;
 import cn.zjw.mrs.vo.comment.CommentMovieVo;
@@ -33,6 +35,12 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
 
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private UserLikeRedisService userLikeRedisService;
+
+    @Resource
+    private UserLikeService userLikeService;
 
     @Override
     public Integer addComment(Comment comment, String username) {
@@ -91,6 +99,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
         List<CommentStripVo> commentStripVos = commentMapper.selectMoreCommentsByMovieId(mid, currentPage, pageSize);
         for (CommentStripVo comment: commentStripVos) {
             comment.setAvatar(PicUrlUtil.getFullAvatarUrl(comment.getAvatar()));
+            // 更新点赞数：总点赞数 = 数据库中的点赞数 + redis中的点赞数
+            comment.setAgree(comment.getAgree() + userLikeRedisService.getUserLikeCountFromRedis(comment.getId()));
         }
         return commentStripVos;
     }
@@ -98,12 +108,19 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
     @Override
     public List<CommentMovieVo> getOwnCommentMovieMoments(Long uid) {
         List<CommentMovieVo> commentMovieVos = commentMapper.selectOwnCommentMovieMoments(uid);
-        // 获取头像和电影海报完整的url
+
         for (CommentMovieVo commentMovieVo: commentMovieVos) {
+            // 获取头像和电影海报完整的url
             String avatar = commentMovieVo.getCommentStripVo().getAvatar();
             commentMovieVo.getCommentStripVo().setAvatar(PicUrlUtil.getFullAvatarUrl(avatar));
             String pic = commentMovieVo.getMovieStripVo().getPic();
             commentMovieVo.getMovieStripVo().setPic(PicUrlUtil.getFullMoviePicUrl(pic));
+
+            // 更新点赞数：总点赞数 = 数据库中的点赞数 + redis中的点赞数
+            long cid = commentMovieVo.getCommentStripVo().getId();
+            int dbAgree = commentMovieVo.getCommentStripVo().getAgree();
+            int redisAgree = userLikeRedisService.getUserLikeCountFromRedis(cid);
+            commentMovieVo.getCommentStripVo().setAgree(dbAgree + redisAgree);
         }
         return commentMovieVos;
     }

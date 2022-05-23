@@ -13,6 +13,8 @@ import java.sql.Timestamp;
  */
 @Data
 public class CommentStripVo {
+    private long id;
+
     private int score;
 
     private String comment;
@@ -28,4 +30,6 @@ public class CommentStripVo {
     private String nickname;
 
     private String avatar;
+
+    private Integer status;
 }

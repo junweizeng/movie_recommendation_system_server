@@ -5,6 +5,8 @@ import cn.zjw.mrs.entity.LoginUser;
 import cn.zjw.mrs.entity.Result;
 import cn.zjw.mrs.service.CommentService;
 import cn.zjw.mrs.service.RecommendationService;
+import cn.zjw.mrs.service.UserLikeRedisService;
+import cn.zjw.mrs.service.UserLikeService;
 import cn.zjw.mrs.vo.comment.CommentMovieVo;
 import cn.zjw.mrs.vo.comment.CommentStripVo;
 import org.springframework.security.core.Authentication;
@@ -30,6 +32,12 @@ public class CommentController {
 
     @Resource
     private RecommendationService recommendationService;
+
+    @Resource
+    private UserLikeService userLikeService;
+
+    @Resource
+    private UserLikeRedisService userLikeRedisService;
 
     @PostMapping
     private Result<?> addComment(@RequestBody Comment comment, Principal principal, Authentication authentication) {
@@ -62,13 +70,22 @@ public class CommentController {
         return Result.success(ownComment);
     }
 
-    @GetMapping("/all")
+    @GetMapping("/more")
     private Result<?> getMoreCommentsByMovieId(@RequestParam Long mid,
                                                @RequestParam(defaultValue = "0") int currentPage,
-                                               @RequestParam(defaultValue = "10") int pageSize) {
+                                               @RequestParam(defaultValue = "10") int pageSize,
+                                               Authentication authentication) {
         List<CommentStripVo> comments = commentService.getMoreCommentsByMovieId(mid, currentPage, pageSize);
         if (Objects.isNull(comments)) {
             return Result.error("该电影下暂无评论");
+        }
+
+        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+        long uid = loginUser.getUser().getId();
+        for (CommentStripVo comment: comments) {
+            // 获取点赞状态
+            int status = userLikeService.getUserLikeStatus(comment.getId(), uid);
+            comment.setStatus(status);
         }
         return Result.success(comments);
     }
@@ -80,6 +97,12 @@ public class CommentController {
         List<CommentMovieVo> moments = commentService.getOwnCommentMovieMoments(uid);
         if (Objects.isNull(moments)) {
             return Result.error("暂无评价动态");
+        }
+
+        for (CommentMovieVo moment: moments) {
+            // 获取用户点赞状态
+            int status = userLikeService.getUserLikeStatus(moment.getCommentStripVo().getId(), uid);
+            moment.getCommentStripVo().setStatus(status);
         }
         return Result.success(moments);
     }
@@ -99,5 +122,22 @@ public class CommentController {
     private Result<?> getCommentsWordCloudData(@RequestParam long mid) {
         List<Map<String, String>> res = commentService.getCommentsWordCloudData(mid);
         return Result.success(res);
+    }
+
+    @PutMapping("/like")
+    private Result<?> likeComment(@RequestBody Map<String, String> data, Authentication authentication) {
+        long cid = Long.parseLong(data.get("cid"));
+        long status = Long.parseLong(data.get("status"));
+        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+        Long uid = loginUser.getUser().getId();
+
+        if (status == 1) {
+            userLikeRedisService.likeComment(cid, uid);
+            userLikeRedisService.increaseLikedCount(cid);
+        } else {
+            userLikeRedisService.unlikeComment(cid, uid);
+            userLikeRedisService.decreaseLikedCount(cid);
+        }
+        return Result.success();
     }
 }

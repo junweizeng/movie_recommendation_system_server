@@ -19,6 +19,12 @@ import lombok.Data;
 @Data
 public class Comment implements Serializable {
     /**
+     * 评论id
+     */
+    @TableId(type = IdType.AUTO)
+    private Long id;
+
+    /**
      * 用户ID
      */
     private Long uid;

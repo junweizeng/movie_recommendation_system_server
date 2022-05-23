@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.zjw.mrs.mapper.UserLikeMapper">
+
+    <resultMap id="BaseResultMap" type="cn.zjw.mrs.entity.UserLike">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="cid" column="cid" jdbcType="BIGINT"/>
+            <result property="uid" column="uid" jdbcType="BIGINT"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,cid,uid,
+        status
+    </sql>
+</mapper>
