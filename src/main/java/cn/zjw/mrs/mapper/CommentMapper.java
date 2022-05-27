@@ -37,9 +37,11 @@ public interface CommentMapper extends BaseMapper<Comment> {
     /**
      * 获取某个用户的所有评价动态
      * @param uid 用户id
+     * @param currentIndex 从第几条开始取
+     * @param pageSize 每页条数
      * @return 所有评价动态
      */
-    List<CommentMovieVo> selectOwnCommentMovieMoments(Long uid);
+    List<CommentMovieVo> selectOwnCommentMovieMoments(Long uid, Integer currentIndex, Integer pageSize);
 
     /**
      * 获取用户所有的偏好

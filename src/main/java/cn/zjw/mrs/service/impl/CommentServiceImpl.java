@@ -98,7 +98,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
         currentPage = currentPage * pageSize;
         List<CommentStripVo> commentStripVos = commentMapper.selectMoreCommentsByMovieId(mid, currentPage, pageSize);
         for (CommentStripVo comment: commentStripVos) {
-            comment.setAvatar(PicUrlUtil.getFullAvatarUrl(comment.getAvatar()));
+            if (comment.getType() == 0) {
+                comment.setAvatar(PicUrlUtil.getFullAvatarUrl(comment.getAvatar()));
+            }
             // 更新点赞数：总点赞数 = 数据库中的点赞数 + redis中的点赞数
             comment.setAgree(comment.getAgree() + userLikeRedisService.getUserLikeCountFromRedis(comment.getId()));
         }
@@ -106,9 +108,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
     }
 
     @Override
-    public List<CommentMovieVo> getOwnCommentMovieMoments(Long uid) {
-        List<CommentMovieVo> commentMovieVos = commentMapper.selectOwnCommentMovieMoments(uid);
-
+    public Map<String, Object> getMoreOwnCommentMovieMoments(Long uid, Integer currentPage, Integer pageSize) {
+        Integer currentIndex = (currentPage - 1) * pageSize;
+        List<CommentMovieVo> commentMovieVos = commentMapper.selectOwnCommentMovieMoments(uid, currentIndex, pageSize);
         for (CommentMovieVo commentMovieVo: commentMovieVos) {
             // 获取头像和电影海报完整的url
             String avatar = commentMovieVo.getCommentStripVo().getAvatar();
@@ -122,7 +124,20 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
             int redisAgree = userLikeRedisService.getUserLikeCountFromRedis(cid);
             commentMovieVo.getCommentStripVo().setAgree(dbAgree + redisAgree);
         }
-        return commentMovieVos;
+        for (CommentMovieVo moment: commentMovieVos) {
+            // 获取用户点赞状态
+            int status = userLikeService.getUserLikeStatus(moment.getCommentStripVo().getId(), uid);
+            moment.getCommentStripVo().setStatus(status);
+        }
+
+        // 获取用户动态总条目数
+        List<Comment> comments = commentMapper.selectList(new LambdaQueryWrapper<Comment>().eq(Comment::getUid, uid));
+        Integer total = comments.size();
+
+        Map<String, Object> page = new HashMap<>(2);
+        page.put("total", total);
+        page.put("records", commentMovieVos);
+        return page;
     }
 
     @Override
@@ -144,6 +159,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
             // 去掉两边的空格
             String sentence = comment.getComment().trim();
             // 将所有标点符号换成空格
+            // 小写 p 是 property 的意思，表示 Unicode 属性，用于 Unicode 正表达式的前缀。
+            // 中括号内的“P”表示Unicode 字符集七个字符属性之一：标点字符。
             sentence = sentence.replaceAll("\\p{P}", "");
             sentence = sentence.replaceAll("\\s+", "");
 

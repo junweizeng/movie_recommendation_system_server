@@ -8,6 +8,7 @@ import cn.zjw.mrs.utils.PicUrlUtil;
 import cn.zjw.mrs.vo.movie.MovieCardVo;
 import cn.zjw.mrs.vo.movie.ReviewedMovieStripVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.nd4j.linalg.api.ops.impl.reduce.same.Max;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +47,8 @@ public class MovieController {
                                              @RequestParam(defaultValue = "全部") String type,
                                              @RequestParam(defaultValue = "全部") String region,
                                              @RequestParam(defaultValue = "") String search) {
+        // 限制请求数量，防止懂技术的人，通过接口一次性获取到所有的记录
+        pageSize = Math.min(20, pageSize);
         Page<Movie> page = movieService.getPageMovies(currentPage, pageSize, type, region, search);
         return Result.success(page);
     }
@@ -56,7 +59,7 @@ public class MovieController {
      * @return 电影详情
      */
     @GetMapping("/info")
-    public Result<?> getMovie(@RequestParam Integer id) {
+    public Result<?> getMovieInfo(@RequestParam Integer id) {
         Movie movie = movieService.getById(id);
         movie.setPic(PicUrlUtil.getFullMoviePicUrl(movie.getPic()));
         return Result.success(movie);
@@ -81,11 +84,17 @@ public class MovieController {
      * @return 评价过的电影条目
      */
     @GetMapping("/reviewed")
-    public Result<?> getAllReviewedMovies(Authentication authentication) {
+    public Result<?> getAllReviewedMovies(
+            @RequestParam(defaultValue = "1") Integer currentPage,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            Authentication authentication) {
+        // 限制请求数量，防止懂技术的人，通过接口一次性获取到所有的记录
+        pageSize = Math.min(20, pageSize);
+
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         Long uid = loginUser.getUser().getId();
-        List<ReviewedMovieStripVo> reviewedMovies = movieService.getAllReviewedMoviesByUserId(uid);
-        return Result.success(reviewedMovies);
+        Map<String, Object> page = movieService.getMoreReviewedMoviesByUserId(uid, currentPage, pageSize);
+        return Result.success(page);
     }
 
     /**

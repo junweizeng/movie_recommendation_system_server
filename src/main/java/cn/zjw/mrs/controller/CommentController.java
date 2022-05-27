@@ -9,14 +9,13 @@ import cn.zjw.mrs.service.UserLikeRedisService;
 import cn.zjw.mrs.service.UserLikeService;
 import cn.zjw.mrs.vo.comment.CommentMovieVo;
 import cn.zjw.mrs.vo.comment.CommentStripVo;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.security.Principal;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author zjw
@@ -75,6 +74,9 @@ public class CommentController {
                                                @RequestParam(defaultValue = "0") int currentPage,
                                                @RequestParam(defaultValue = "10") int pageSize,
                                                Authentication authentication) {
+        // 限制请求数量，防止懂技术的人，通过接口一次性获取到所有的记录
+        pageSize = Math.min(20, pageSize);
+
         List<CommentStripVo> comments = commentService.getMoreCommentsByMovieId(mid, currentPage, pageSize);
         if (Objects.isNull(comments)) {
             return Result.error("该电影下暂无评论");
@@ -91,20 +93,19 @@ public class CommentController {
     }
 
     @GetMapping("/movie/moments")
-    private Result<?> getOwnCommentMovieMoments(Authentication authentication) {
+    private Result<?> getMoreOwnCommentMovieMoments(
+            @RequestParam(defaultValue = "1") Integer currentPage,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            Authentication authentication) {
+        // 限制请求数量，防止懂技术的人，通过接口一次性获取到所有的记录
+        pageSize = Math.min(20, pageSize);
+
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         Long uid = loginUser.getUser().getId();
-        List<CommentMovieVo> moments = commentService.getOwnCommentMovieMoments(uid);
-        if (Objects.isNull(moments)) {
-            return Result.error("暂无评价动态");
-        }
 
-        for (CommentMovieVo moment: moments) {
-            // 获取用户点赞状态
-            int status = userLikeService.getUserLikeStatus(moment.getCommentStripVo().getId(), uid);
-            moment.getCommentStripVo().setStatus(status);
-        }
-        return Result.success(moments);
+        Map<String, Object> page = commentService.getMoreOwnCommentMovieMoments(uid, currentPage, pageSize);
+
+        return Result.success(page);
     }
 
     @DeleteMapping("/remove")

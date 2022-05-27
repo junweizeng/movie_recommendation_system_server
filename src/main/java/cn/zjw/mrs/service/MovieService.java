@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author zjw
@@ -36,11 +37,13 @@ public interface MovieService extends IService<Movie> {
     List<MovieCardVo> getRecommendedMoviesByMovieId(Long did);
 
     /**
-     * 获取用户id为uid的用户评价过的所有电影的基本信息
+     * 获取用户id为uid的用户评价过的电影列表（按页数和每页条数获取）
      * @param uid 用户id
-     * @return 评价过的电影条目
+     * @param currentPage 当前页数
+     * @param pageSize 每页条数
+     * @return 评价过的电影条目和总数量
      */
-    List<ReviewedMovieStripVo> getAllReviewedMoviesByUserId(Long uid);
+    Map<String, Object> getMoreReviewedMoviesByUserId(Long uid, Integer currentPage, Integer pageSize);
 
     /**
      * 获取搜索关键字模糊匹配的电影名称列表

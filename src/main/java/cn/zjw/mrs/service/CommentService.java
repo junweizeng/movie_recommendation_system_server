@@ -48,9 +48,11 @@ public interface CommentService extends IService<Comment> {
     /**
      * 获取指定用户的电影评价动态
      * @param uid 用户id
+     * @param currentPage 当前页码
+     * @param pageSize 每页条数
      * @return 电影评价动态条目
      */
-    List<CommentMovieVo> getOwnCommentMovieMoments(Long uid);
+    Map<String, Object> getMoreOwnCommentMovieMoments(Long uid, Integer currentPage, Integer pageSize);
 
     /**
      * 删除用户对某部电影的评论

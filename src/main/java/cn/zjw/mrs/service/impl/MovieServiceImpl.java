@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author zjw
@@ -62,12 +64,21 @@ public class MovieServiceImpl extends ServiceImpl<MovieMapper, Movie>
     }
 
     @Override
-    public List<ReviewedMovieStripVo> getAllReviewedMoviesByUserId(Long uid) {
-        List<ReviewedMovieStripVo> reviewedMovies = movieMapper.selectAllReviewedMoviesByUserId(uid);
+    public Map<String, Object> getMoreReviewedMoviesByUserId(Long uid, Integer currentPage, Integer pageSize) {
+        Integer currentIndex = (currentPage - 1) * pageSize;
+        List<ReviewedMovieStripVo> reviewedMovies = movieMapper.selectMoreReviewedMoviesByUserId(uid, currentIndex, pageSize);
         for (ReviewedMovieStripVo movie: reviewedMovies) {
             movie.setPic(PicUrlUtil.getFullMoviePicUrl(movie.getPic()));
         }
-        return reviewedMovies;
+
+        // 获取用户评价过的电影总条目数
+        List<ReviewedMovieStripVo> totalMovies = movieMapper.selectMoreReviewedMoviesByUserId(uid, 0, 10000);
+        Integer total = totalMovies.size();
+
+        Map<String, Object> page = new HashMap<>(2);
+        page.put("records", reviewedMovies);
+        page.put("total", total);
+        return page;
     }
 
     @Override

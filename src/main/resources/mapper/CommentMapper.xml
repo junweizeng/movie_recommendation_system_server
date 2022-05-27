@@ -28,7 +28,7 @@
     </select>
 
     <select id="selectMoreCommentsByMovieId" resultType="cn.zjw.mrs.vo.comment.CommentStripVo">
-        SELECT c.id, c.score, c.comment, c.time, c.nickname, c.agree, u.avatar FROM `comment` c
+        SELECT c.id, c.score, c.comment, c.time, c.nickname, c.agree, c.type, u.avatar FROM `comment` c
         JOIN `user` u ON c.uid = u.id
         WHERE mid = ${mid}
         ORDER BY c.time DESC
@@ -62,8 +62,9 @@
         SELECT c.*, u.avatar, m.did, m.name, m.score m_score, m.pic, m.directors, m.actors, m.regions, m.types FROM `comment` c
         JOIN `user` u ON c.uid = u.id
         JOIN `movie` m ON c.mid = m.id
-        WHERE uid = ${id}
+        WHERE uid = ${uid}
         ORDER BY c.time DESC
+        LIMIT ${currentIndex}, ${pageSize}
     </select>
 
     <resultMap id="preferenceResultMap" type="cn.zjw.mrs.entity.Preference">

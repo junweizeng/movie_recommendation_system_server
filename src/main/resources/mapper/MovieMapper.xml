@@ -59,11 +59,12 @@
         <result property="score" column="m_score" jdbcType="DOUBLE"/>
         <result property="time" column="time" jdbcType="TIMESTAMP"/>
     </resultMap>
-    <select id="selectAllReviewedMoviesByUserId" resultMap="ReviewedMovieVoResultMap" resultType="cn.zjw.mrs.vo.movie.ReviewedMovieStripVo">
+    <select id="selectMoreReviewedMoviesByUserId" resultMap="ReviewedMovieVoResultMap" resultType="cn.zjw.mrs.vo.movie.ReviewedMovieStripVo">
         SELECT m.id, m.did, m.name, m.score m_score, m.pic, m.directors, m.actors, m.regions, m.types, c.score u_score, c.time FROM `comment` c
         JOIN movie m ON m.id = c.mid
-        WHERE c.uid = ${id}
+        WHERE c.uid = ${uid}
         ORDER BY c.time DESC
+        LIMIT ${currentIndex}, ${pageSize}
     </select>
     <select id="selectSomeReviewedMoviesByUserId" resultMap="ReviewedMovieVoResultMap" resultType="cn.zjw.mrs.vo.movie.ReviewedMovieStripVo">
         SELECT m.id, m.did, m.name, m.score m_score, m.pic, m.directors, m.actors, m.regions, m.types, c.score u_score, c.time FROM `comment` c

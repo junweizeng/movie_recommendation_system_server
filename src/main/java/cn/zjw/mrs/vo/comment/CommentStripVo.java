@@ -27,9 +27,17 @@ public class CommentStripVo {
 
     private int agree;
 
+    /**
+     * 1表示豆瓣评论，0表示系统评论
+     */
+    private int type;
+
     private String nickname;
 
     private String avatar;
 
+    /**
+     * 1表示已点赞，0表示未点赞
+     */
     private Integer status;
 }

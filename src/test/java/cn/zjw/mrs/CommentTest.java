@@ -42,7 +42,7 @@ public class CommentTest {
 
     @Test
     public void getCommentMovieMoments() {
-        List<CommentMovieVo> commentMovieVos = commentMapper.selectOwnCommentMovieMoments((long) 10);
+        List<CommentMovieVo> commentMovieVos = commentMapper.selectOwnCommentMovieMoments((long) 10, 0, 10);
         for (CommentMovieVo commentStripVo: commentMovieVos) {
             System.out.println(commentStripVo.getCommentStripVo().toString());
             System.out.println(commentStripVo.getMovieStripVo().toString());

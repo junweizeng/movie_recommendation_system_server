@@ -29,9 +29,11 @@ public interface MovieMapper extends BaseMapper<Movie> {
     /**
      * 查询某个用户评价过的所有电影基本信息
      * @param uid 用户id
+     * @param currentIndex 从第几条开始取
+     * @param pageSize 每页条数
      * @return 评价过的所有电影基本信息
      */
-    List<ReviewedMovieStripVo> selectAllReviewedMoviesByUserId(Long uid);
+    List<ReviewedMovieStripVo> selectMoreReviewedMoviesByUserId(Long uid, Integer currentIndex, Integer pageSize);
 
     /**
      * 查询某个用户最近评价过的若干电影基本信息

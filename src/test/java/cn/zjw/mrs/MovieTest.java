@@ -34,7 +34,7 @@ public class MovieTest {
 
     @Test
     public void selectAllReviewedMoviesByUserId() {
-        List<ReviewedMovieStripVo> movies = movieMapper.selectAllReviewedMoviesByUserId(10L);
+        List<ReviewedMovieStripVo> movies = movieMapper.selectMoreReviewedMoviesByUserId(10L, 1, 10);
         for (ReviewedMovieStripVo movie : movies) {
             System.out.println(movie.toString());
         }
