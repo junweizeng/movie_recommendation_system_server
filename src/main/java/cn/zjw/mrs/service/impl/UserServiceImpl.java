@@ -1,12 +1,10 @@
 package cn.zjw.mrs.service.impl;
 
-import cn.zjw.mrs.entity.Comment;
-import cn.zjw.mrs.entity.LoginUser;
-import cn.zjw.mrs.entity.Result;
-import cn.zjw.mrs.entity.User;
+import cn.zjw.mrs.entity.*;
 import cn.zjw.mrs.enums.SexEnum;
 import cn.zjw.mrs.mapper.CommentMapper;
 import cn.zjw.mrs.mapper.UserMapper;
+import cn.zjw.mrs.service.RecommendationService;
 import cn.zjw.mrs.service.UserService;
 import cn.zjw.mrs.utils.JwtUtil;
 import cn.zjw.mrs.utils.PicUrlUtil;
@@ -49,6 +47,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Resource
     private CommentMapper commentMapper;
+
+    @Resource
+    private RecommendationService recommendationService;
 
     @Resource
     private PasswordEncoder passwordEncoder;
@@ -109,6 +110,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         user.setNickname(user.getUsername());
         user.setSex(SexEnum.SECRET);
         userMapper.insert(user);
+
+        // 解决用户冷启动问题
+        User newUser = userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, user.getUsername()));
+        Long id = newUser.getId();
+        recommendationService.solveColdStart(id);
+
         return Result.success("注册成功");
     }
 

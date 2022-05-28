@@ -10,6 +10,7 @@ import cn.zjw.mrs.service.UserLikeService;
 import cn.zjw.mrs.vo.comment.CommentMovieVo;
 import cn.zjw.mrs.vo.comment.CommentStripVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,7 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("/comment")
+@Slf4j
 public class CommentController {
     @Resource
     private CommentService commentService;
@@ -109,13 +111,15 @@ public class CommentController {
     }
 
     @DeleteMapping("/remove")
-    private Result<?> removeOwnComment(@RequestBody Comment comment, Authentication authentication) {
+    private Result<?> removeOwnComment(@RequestBody String mid, Authentication authentication) {
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         Long uid = loginUser.getUser().getId();
-        int delete = commentService.removeOwnComment(uid, comment.getMid());
+        int delete = commentService.removeOwnComment(uid, Long.valueOf(mid));
         if (delete == 0) {
             return Result.error("短评删除失败(┬┬﹏┬┬)");
         }
+
+        recommendationService.updateRecommendation(uid);
         return Result.success("短评删除成功(‾◡◝)");
     }
 

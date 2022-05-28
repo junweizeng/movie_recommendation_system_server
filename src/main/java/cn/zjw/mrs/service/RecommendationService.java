@@ -15,6 +15,19 @@ import java.util.Map;
 * @createDate 2022-04-24 00:04:20
 */
 public interface RecommendationService extends IService<Recommendation> {
+    /**
+     * 解决用户冷启动问题，用户注册是调用
+     * @param uid 用户id
+     */
+    void solveColdStart(long uid);
+
+    /**
+     * 随机电影推荐，从100部电影中随机获取num部电影推荐给用户
+     * @param uid 用户id
+     * @param num 获取随机电影数量
+     * @return 推荐结果
+     */
+    List<Recommendation> randomRecommended(Long uid, Integer num);
 
     /**
      * 通过用户id获取数据库中的电影推荐列表

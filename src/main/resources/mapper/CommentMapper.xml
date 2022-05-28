@@ -22,7 +22,7 @@
     </sql>
 
     <select id="selectOwnCommentByUidAndMid" resultType="cn.zjw.mrs.vo.comment.CommentStripVo">
-        SELECT c.score, c.comment, c.time, c.nickname, c.agree, u.avatar FROM `comment` c
+        SELECT c.id, c.score, c.comment, c.time, c.nickname, c.agree, u.avatar FROM `comment` c
         JOIN `user` u ON c.uid = u.id
         WHERE uid = ${uid} AND mid = ${mid}
     </select>

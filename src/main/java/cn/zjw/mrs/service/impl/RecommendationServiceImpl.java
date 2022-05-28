@@ -2,9 +2,12 @@ package cn.zjw.mrs.service.impl;
 
 import cn.hutool.core.lang.Pair;
 import cn.zjw.mrs.entity.*;
+import cn.zjw.mrs.enums.RecommendationTypeEnum;
 import cn.zjw.mrs.mapper.*;
 import cn.zjw.mrs.service.RecommendationService;
 import cn.zjw.mrs.utils.PicUrlUtil;
+import cn.zjw.mrs.utils.RecommendationUtil;
+import cn.zjw.mrs.vo.movie.MovieCardVo;
 import cn.zjw.mrs.vo.movie.RecommendedMovieVo;
 import cn.zjw.mrs.vo.movie.ReviewedMovieStripVo;
 import cn.zjw.mrs.vo.movie.relation.CategoryVo;
@@ -28,10 +31,7 @@ import org.apache.mahout.cf.taste.recommender.Recommender;
 import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -42,15 +42,15 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 /**
-* @author 95758
-* @description 针对表【user_recommendation】的数据库操作Service实现
-* @createDate 2022-04-24 00:04:20
-*/
+ * @author 95758
+ * @description 针对表【user_recommendation】的数据库操作Service实现
+ * @createDate 2022-04-24 00:04:20
+ */
 @Component
 @Service
 @Slf4j
 public class RecommendationServiceImpl extends ServiceImpl<RecommendationMapper, Recommendation>
-    implements RecommendationService{
+        implements RecommendationService{
 
     /**
      * 基于用户的协同过滤的电影推荐器
@@ -63,7 +63,7 @@ public class RecommendationServiceImpl extends ServiceImpl<RecommendationMapper,
      */
     @Async("asyncServiceExecutor")
     @Scheduled(fixedRate = 1000 * 60 * 20)
-    public void updateUserBasedCollaborativeFilteringRecommendationRecommender() {
+    public void updateUserBasedCollaborativeFilteringRecommendationRecommender() throws TasteException {
         log.info("开始：基于用户的协同过滤推荐，重新计算获取推荐器");
 
         try {
@@ -132,10 +132,45 @@ public class RecommendationServiceImpl extends ServiceImpl<RecommendationMapper,
     @Resource
     private CommentMapper commentMapper;
 
+    @Override
+    public List<Recommendation> randomRecommended(Long uid, Integer num) {
+        List<Recommendation> newRecommendations = new ArrayList<>();
+        List<MovieCardVo> movieCardVos = movieMapper.selectHighestRatedMovies(100);
+        Set<Integer> randomIndexSet = new HashSet<>();
+        // 获取num部随机高分电影
+        RecommendationUtil.randomSet(0, 100, 50, randomIndexSet);
+        int cnt = 0;
+        for (Integer randomIndex: randomIndexSet) {
+            MovieCardVo movie = movieCardVos.get(randomIndex);
+
+            Comment comment = commentMapper.selectOne(new LambdaQueryWrapper<Comment>()
+                    .eq(Comment::getUid, uid)
+                    .eq(Comment::getMid, movie.getId()));
+            // 如果评论不存在，即用户未看过，加入推荐列表
+            if (Objects.isNull(comment)) {
+                Recommendation recommendation = new Recommendation(uid, movie.getId(), 0.6,
+                        RecommendationTypeEnum.RANDOM.getTypeCode());
+                newRecommendations.add(recommendation);
+                cnt ++;
+                if (cnt >= num) {
+                    break;
+                }
+            }
+        }
+        return newRecommendations;
+    }
+
+    @Override
+    @Async("asyncServiceExecutor")
+    public void solveColdStart(long uid) {
+        List<Recommendation> newRecommendations = randomRecommended(uid, 30);
+        saveBatch(newRecommendations);
+    }
 
     @Override
     public List<RecommendedMovieVo> getRecommendedMoviesByUserId(Long uid) {
         List<RecommendedMovieVo> recommendedMovies = recommendationMapper.selectRecommendedMoviesByUserId(uid, 30);
+
         for (RecommendedMovieVo movie: recommendedMovies) {
             movie.setPic(PicUrlUtil.getFullMoviePicUrl(movie.getPic()));
         }
@@ -235,35 +270,51 @@ public class RecommendationServiceImpl extends ServiceImpl<RecommendationMapper,
 
         // 基于内容推荐
         List<Pair<Long, Double>> contentBasedResult = getContentBasedMovieRecommendationResult(uid, 30);
+        int cnt = 0;
         System.out.println("\n排序结果：");
         for (int i = 0; i < contentBasedResult.size(); i ++ ) {
             System.out.println(contentBasedResult.get(i).getKey() + "   " + contentBasedResult.get(i).getValue());
             // 重新插入系统新推荐的电影
-            recommendationMapper.insert(new Recommendation(uid,
+            int insert = recommendationMapper.insert(new Recommendation(uid,
                     contentBasedResult.get(i).getKey(),
-                    contentBasedResult.get(i).getValue()));
+                    contentBasedResult.get(i).getValue(),
+                    RecommendationTypeEnum.CONTENT_BASED.getTypeCode()));
+            cnt += insert;
+            if (cnt >= 15) {
+                break;
+            }
         }
 
         // 协同过滤推荐
         try {
             List<RecommendedItem> recommendedMovies = userCfRecommender.recommend(uid, 30);
-            int cnt = 0;
+
             for (int i = 0; i < recommendedMovies.size(); i ++ ) {
                 // 判断电影是否已经看过，如果没有则插入推荐表中（去重）
                 if (commentMapper.selectOne(
                         new LambdaQueryWrapper<Comment>()
-                                .eq(Comment::getMid, recommendedMovies.get(i).getItemID())) == null) {
+                                .eq(Comment::getMid, recommendedMovies.get(i).getItemID())
+                                .eq(Comment::getUid, uid)) == null) {
                     recommendationMapper.insert(new Recommendation(uid,
                             recommendedMovies.get(i).getItemID(),
-                            recommendedMovies.get(i).getValue() / 10.0));
+                            recommendedMovies.get(i).getValue() / 10.0,
+                            RecommendationTypeEnum.USER_BASED_CF.getTypeCode()));
                     cnt ++;
                 }
-                if (cnt >= 15) {
+                if (cnt >= 30) {
                     break;
                 }
             }
         } catch (TasteException e) {
             e.printStackTrace();
+        }
+
+        List<Recommendation> recommendations =
+                recommendationMapper.selectList(new LambdaQueryWrapper<Recommendation>().eq(Recommendation::getUid, uid));
+        int size = recommendations.size();
+        if (size < 30) {
+            List<Recommendation> recommendations1 = randomRecommended(uid, 30 - size);
+            saveBatch(recommendations1);
         }
 
         Timestamp t2 = Timestamp.valueOf(LocalDateTime.now());
