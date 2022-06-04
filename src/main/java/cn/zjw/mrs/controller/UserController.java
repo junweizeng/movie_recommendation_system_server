@@ -7,7 +7,6 @@ import cn.zjw.mrs.service.OssService;
 import cn.zjw.mrs.service.UserService;
 import cn.zjw.mrs.utils.Base64DecodedMultipartFile;
 import cn.zjw.mrs.vo.user.UserInfoVo;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.security.core.Authentication;
@@ -16,9 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.security.Principal;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author zjw

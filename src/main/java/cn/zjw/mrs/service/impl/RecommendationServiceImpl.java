@@ -108,6 +108,11 @@ public class RecommendationServiceImpl extends ServiceImpl<RecommendationMapper,
      */
     private static final int USER_LIKE_WEIGHT = 3;
 
+    /**
+     * 推荐电影数量
+     */
+    private static final int THIRTY_RECOMMENDATIONS = 30;
+
     @Resource
     private RecommendationMapper recommendationMapper;
 
@@ -312,7 +317,8 @@ public class RecommendationServiceImpl extends ServiceImpl<RecommendationMapper,
         List<Recommendation> recommendations =
                 recommendationMapper.selectList(new LambdaQueryWrapper<Recommendation>().eq(Recommendation::getUid, uid));
         int size = recommendations.size();
-        if (size < 30) {
+        
+        if (size < THIRTY_RECOMMENDATIONS) {
             List<Recommendation> recommendations1 = randomRecommended(uid, 30 - size);
             saveBatch(recommendations1);
         }
