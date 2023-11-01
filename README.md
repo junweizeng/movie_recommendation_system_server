@@ -1,6 +1,6 @@
 # movie_recommendation_system_server
 
-Spring Boot + Spring Security
+Spring Boot + Spring Security + Redis + MyBatis-Plus
 
 ## 0. 电影推荐系统前端
 
