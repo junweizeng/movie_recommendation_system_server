@@ -19,9 +19,9 @@ public class MyDataModel {
         MysqlDataSource dataSource = new MysqlDataSource();
         JDBCDataModel dataModel = null;
         try {
-            dataSource.setServerName("rm-bp11602preg16q6g4jo.mysql.rds.aliyuncs.com");
-            dataSource.setUser("zjw");
-            dataSource.setPassword("Zjw2933!");
+            dataSource.setServerName("rm-xxx.mysql.rds.aliyuncs.com");
+            dataSource.setUser("xxx");
+            dataSource.setPassword("xxx");
             dataSource.setDatabaseName("mrs");
             dataSource.setServerTimezone("GMT%2B8");
             dataSource.setCharacterEncoding("utf-8");
