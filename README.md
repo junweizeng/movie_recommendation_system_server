@@ -1,10 +1,25 @@
-# movie_recommendation_system_server
+# 电影推荐系统（后端）
 
-Spring Boot + Spring Security + Redis + MyBatis-Plus
+## 前言
 
-## 0. 电影推荐系统前端
+总项目名称：`电影推荐系统`
 
-前端GitHub地址：[movie_recommendation_system_vue](https://github.com/Vanish-Zeng/movie_recommendation_system_vue)
+项目采用`前后端分离`：
+
+1. 前端：
+   - 仓库地址：[movie_recommendation_system_vue](https://github.com/jun-wei-zeng/movie_recommendation_system_vue)
+   - 技术栈：`Vue3` + `Element Plus` + `axios`等
+2. 后端：
+   - 仓库地址：[movie_recommendation_system_server](https://github.com/jun-wei-zeng/movie_recommendation_system_server)
+   - 技术栈：`Spring Boot` + `Spring Security` + `Redis` + `MyBatis-Plus`等
+3. 数据爬虫：
+   - 简介：爬取项目所需的电影基本信息数据和用户评价数据等并存储。
+   - 仓库地址：正在路上...
+   - 技术栈：正在路上...
+
+系统功能模块总览：
+
+![系统功能模块.png](README_IMG/系统功能模块.png)
 
 ## 1. 项目打包部署
 
@@ -22,7 +37,7 @@ IDEA右边栏中选择`Maven` → 按住`Ctrl` → 选择`Lifecycle`下的`clean
     
     >nohup java -jar 项目名.jar >out.txt &
 
-## 2. 功能实现
+## 2. 后端功能实现
 
 1. 用户登录、注册、个人信息修改等接口实现。
 2. 基于内容推荐和基于用户协同过滤推荐等推荐算法实现，整合两种算法实现混合式推荐，并解决冷启动问题。
