@@ -19,6 +19,6 @@ public class MailTest {
 
     @Test
     public void sendMailTest() {
-        authService.sendMailAuthCode("123", "957589005@qq.com");
+        authService.sendMailAuthCode("123", "xxx@qq.com");
     }
 }
