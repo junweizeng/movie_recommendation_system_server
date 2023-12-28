@@ -54,7 +54,7 @@ public class AuthServiceImpl implements AuthService {
         String subject = "【电影推荐系统】验证码" + authCode;
         String content = "尊敬的用户，您好:<br/>"
                 + "&emsp;&emsp;本次请求的邮件验证码为: <span style=\"color: red; font-size: 25px;\">"
-                + authCode + "</span>,本验证码 5 分钟内效，请及时输入。（请勿泄露此验证码）<br/>"
+                + authCode + "</span>,本验证码 5 分钟内有效，请及时输入。（请勿泄露此验证码）<br/>"
                 + "&emsp;&emsp;如非本人操作，请忽略该邮件。<br/>&emsp;&emsp;(这是一封通过自动发送的邮件，请不要直接回复）";
         mailUtil.sendHtmlMail(mail, subject, content);
     }
